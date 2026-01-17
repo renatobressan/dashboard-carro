@@ -1,1 +1,125 @@
-Site em construção
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Carro - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .login-box {
+      background: #020617;
+      padding: 40px;
+      border-radius: 14px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.45);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 24px;
+      font-size: 26px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+      opacity: 0.85;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 18px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: #2563eb;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1e40af;
+    }
+
+    .status {
+      margin-top: 16px;
+      font-size: 14px;
+      text-align: center;
+      display: none;
+    }
+
+    .err { color: #f87171; }
+    .ok  { color: #4ade80; }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <h1>Dashboard Carro</h1>
+
+    <label for="login">Login</label>
+    <input type="text" id="login" placeholder="Digite seu login">
+
+    <label for="senha">Senha</label>
+    <input type="password" id="senha" placeholder="Digite sua senha">
+
+    <button id="btnEntrar">Entrar</button>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    function mostrarStatus(msg, tipo) {
+      const s = document.getElementById("status");
+      s.textContent = msg;
+      s.className = "status " + tipo;
+      s.style.display = "block";
+    }
+
+    document.getElementById("btnEntrar").onclick = function () {
+      const login = document.getElementById("login").value.trim();
+      const senha = document.getElementById("senha").value.trim();
+
+      if (!login || !senha) {
+        mostrarStatus("erro de login e senha", "err");
+        return;
+      }
+
+      const LOGIN_CORRETO = "admin";
+      const SENHA_CORRETA = "1234";
+
+      if (login !== LOGIN_CORRETO || senha !== SENHA_CORRETA) {
+        mostrarStatus("erro de senha", "err");
+        return;
+      }
+
+      mostrarStatus("login realizado com sucesso", "ok");
+    };
+  </script>
+
+</body>
+</html>
