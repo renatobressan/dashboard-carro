@@ -4,105 +4,22 @@
   <meta charset="UTF-8">
   <title>Dashboard Carro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: system-ui, Arial, sans-serif;
-      background: #0f172a;
-      color: #e5e7eb;
-      min-height: 100vh;
-    }
-
-    header {
-      background: #020617;
-      padding: 16px 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
-    }
-
-    header h1 {
-      margin: 0;
-      font-size: 20px;
-    }
-
-    button.logout {
-      padding: 8px 14px;
-      border-radius: 10px;
-      border: none;
-      background: #ef4444;
-      color: #fff;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    main {
-      padding: 24px;
-      display: grid;
-      gap: 20px;
-    }
-
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-    }
-
-    .card {
-      background: #020617;
-      border-radius: 14px;
-      padding: 20px;
-      min-height: 120px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.35);
-    }
-
-    .card h2 {
-      margin: 0 0 10px 0;
-      font-size: 15px;
-      color: #93c5fd;
-    }
-
-    .placeholder {
-      opacity: 0.6;
-      font-size: 14px;
-    }
-  </style>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-  <header>
+  <header class="topbar">
     <h1>Dashboard Carro</h1>
-    <button class="logout" onclick="logout()">Sair</button>
+    <button onclick="logout()">Sair</button>
   </header>
 
-  <main>
-    <div class="cards">
-      <div class="card">
-        <h2>Resumo</h2>
-        <div class="placeholder">Conteúdo em breve</div>
-      </div>
-      <div class="card">
-        <h2>Consumo</h2>
-        <div class="placeholder">Conteúdo em breve</div>
-      </div>
-      <div class="card">
-        <h2>Manutenção</h2>
-        <div class="placeholder">Conteúdo em breve</div>
-      </div>
-      <div class="card">
-        <h2>Histórico</h2>
-        <div class="placeholder">Conteúdo em breve</div>
-      </div>
-    </div>
+  <main class="dashboard">
+    <div class="card">Resumo</div>
+    <div class="card">Consumo</div>
+    <div class="card">Manutenção</div>
+    <div class="card">Histórico</div>
   </main>
 
-  <script>
-    function logout() {
-      window.location.href = "index.html";
-    }
-  </script>
-
+  <script src="js/dashboard.js"></script>
 </body>
 </html>
