@@ -5,6 +5,59 @@ body {
   color: #e5e7eb;
 }
 
+/* LOGIN */
+.login-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.login-box {
+  background: #020617;
+  padding: 40px;
+  border-radius: 18px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+}
+
+.login-box h1 {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.login-box label {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  margin: 8px 0 18px 0;
+}
+
+.login-box button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.status {
+  margin-top: 14px;
+  text-align: center;
+  display: none;
+}
+
+/* DASHBOARD */
 .topbar {
   background: linear-gradient(90deg, #2563eb, #1e40af);
   padding: 20px 28px;
