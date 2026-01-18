@@ -1,17 +1,15 @@
-
 // ===============================
-// SUPABASE CLIENT
+// SUPABASE CLIENT (GLOBAL)
 // ===============================
 
 // SUBSTITUA pelos dados do seu projeto
 const SUPABASE_URL = "https://fzcliwxwzkwomvfeevds.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_nJW2y3Z0E1I_cQUN67-nbg_CepDJiVQ";
+const SUPABASE_ANON_KEY = "sb_publishable_nJW2y3Z0E1I_cQUN67-nbg_CepDJiVQ";;
 
-// Cliente Supabase (GLOBAL)
-const sb = supabase.createClient(
+// Criar cliente Supabase e expor globalmente
+window.sb = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
 );
 
-// Debug opcional
-console.log("Supabase conectado:", sb);
+console.log("Supabase conectado:", window.sb);
