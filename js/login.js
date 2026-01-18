@@ -1,26 +1,37 @@
 // ===============================
-// LOGIN COM SUPABASE AUTH
+// LOGIN COM SUPABASE (ROBUSTO)
 // ===============================
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Verificações básicas
   if (!window.sb) {
-    console.error("window.sb não existe");
+    console.error("Supabase não carregado (window.sb inexistente)");
     return;
   }
 
-  const btn = document.getElementById("btnLogin");
+  const btnLogin = document.getElementById("btnLogin");
   const emailInput = document.getElementById("email");
   const senhaInput = document.getElementById("senha");
-  const erro = document.getElementById("loginErro");
+  const erroBox = document.getElementById("loginErro");
 
-  btn.addEventListener("click", async () => {
-    erro.innerText = "";
+  if (!btnLogin || !emailInput || !senhaInput || !erroBox) {
+    console.error("Elementos de login não encontrados no HTML", {
+      btnLogin,
+      emailInput,
+      senhaInput,
+      erroBox
+    });
+    return;
+  }
+
+  btnLogin.addEventListener("click", async () => {
+    erroBox.innerText = "";
 
     const email = emailInput.value.trim();
     const senha = senhaInput.value.trim();
 
     if (!email || !senha) {
-      erro.innerText = "Informe e-mail e senha";
+      erroBox.innerText = "Informe e-mail e senha.";
       return;
     }
 
@@ -31,16 +42,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (error) {
-        erro.innerText = error.message;
+        erroBox.innerText = error.message;
         return;
       }
 
-      console.log("Login OK:", data);
+      console.log("Login realizado:", data.user.email);
       window.location.href = "dashboard.html";
 
     } catch (e) {
-      console.error(e);
-      erro.innerText = "Erro inesperado no login";
+      console.error("Erro inesperado no login:", e);
+      erroBox.innerText = "Erro inesperado no login.";
     }
   });
 });
