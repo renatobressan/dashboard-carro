@@ -1,20 +1,18 @@
 
-
-/* =====================
-   GRÁFICO
-===================== */
-.chart-section {
-  margin-top: 40px;
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
 
-.chart-section h2 {
-  margin-bottom: 14px;
-  font-size: 18px;
-}
-
-.chart-box {
-  background: #020617;
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+.chart-filters button {
+  margin-left: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
 }
