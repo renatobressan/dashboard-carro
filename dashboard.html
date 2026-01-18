@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Dashboard Carro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css?v=6">
+  <link rel="stylesheet" href="css/style.css?v=7">
 </head>
 <body>
 
@@ -42,27 +42,15 @@
     </section>
 
     <section class="chart-section">
-      <h2>Consumo (km/L)</h2>
+      <div class="chart-header">
+        <h2>Consumo (km/L)</h2>
+        <div class="chart-filters">
+          <button onclick="aplicarFiltro(30)">30d</button>
+          <button onclick="aplicarFiltro(60)">60d</button>
+        </div>
+      </div>
       <div class="chart-box">
         <canvas id="consumoChart"></canvas>
-      </div>
-    </section>
-
-    <section class="table-section">
-      <h2>Histórico recente</h2>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Data</th>
-              <th>Tipo</th>
-              <th>Descrição</th>
-              <th>KM</th>
-              <th>Valor (R$)</th>
-            </tr>
-          </thead>
-          <tbody id="historico-body"></tbody>
-        </table>
       </div>
     </section>
 
