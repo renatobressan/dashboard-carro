@@ -1,43 +1,46 @@
-// js/login.js
-// Login com Supabase Auth - versão com debug detalhado
+// ===============================
+// LOGIN COM SUPABASE AUTH
+// ===============================
 
-async function login() {
-  const email = document.getElementById("login")?.value;
-  const senha = document.getElementById("senha")?.value;
-  const erro = document.getElementById("login-erro");
-
-  erro.textContent = "";
-
-  if (!email || !senha) {
-    erro.textContent = "E-mail e senha obrigatórios";
+document.addEventListener("DOMContentLoaded", () => {
+  if (!window.sb) {
+    console.error("window.sb não existe");
     return;
   }
 
-  try {
-    if (!window.sb) {
-      erro.textContent = "Supabase não inicializado";
-      console.error("window.sb não existe");
+  const btn = document.getElementById("btnLogin");
+  const emailInput = document.getElementById("email");
+  const senhaInput = document.getElementById("senha");
+  const erro = document.getElementById("loginErro");
+
+  btn.addEventListener("click", async () => {
+    erro.innerText = "";
+
+    const email = emailInput.value.trim();
+    const senha = senhaInput.value.trim();
+
+    if (!email || !senha) {
+      erro.innerText = "Informe e-mail e senha";
       return;
     }
 
-    console.log("Tentando login com:", email);
+    try {
+      const { data, error } = await window.sb.auth.signInWithPassword({
+        email,
+        password: senha
+      });
 
-    const { data, error } = await window.sb.auth.signInWithPassword({
-      email,
-      password: senha
-    });
+      if (error) {
+        erro.innerText = error.message;
+        return;
+      }
 
-    console.log("Resposta Supabase:", data, error);
+      console.log("Login OK:", data);
+      window.location.href = "dashboard.html";
 
-    if (error) {
-      erro.textContent = error.message;
-      return;
+    } catch (e) {
+      console.error(e);
+      erro.innerText = "Erro inesperado no login";
     }
-
-    window.location.href = "dashboard.html";
-
-  } catch (e) {
-    console.error("Erro real no login:", e);
-    erro.textContent = "Erro inesperado no login (ver console)";
-  }
-}
+  });
+});
