@@ -1,87 +1,62 @@
-// ======================
-// KPIs (dados fake)
-// ======================
-const fakeKPIs = {
-  veiculo: { modelo: "FOX 1.0", placa: "ABC-1234" },
-  consumo: { medio: 12.4, periodo: "Últimos 30 dias" },
-  km: { atual: 132745, atualizado: "Hoje" },
-  manutencao: { tipo: "Óleo", restanteKm: 2300 }
-};
+const ctx = document.getElementById('graficoConsumo');
 
-// ======================
-// Histórico consumo fake
-// ======================
-const consumoHistorico = [
-  { dia: "01/01", consumo: 12.2 },
-  { dia: "05/01", consumo: 12.6 },
-  { dia: "10/01", consumo: 12.8 },
-  { dia: "15/01", consumo: 11.9 },
-  { dia: "20/01", consumo: 12.4 },
-  { dia: "25/01", consumo: 13.1 },
-  { dia: "30/01", consumo: 12.6 },
-  { dia: "05/02", consumo: 12.9 },
-  { dia: "10/02", consumo: 13.0 },
-  { dia: "15/02", consumo: 12.7 }
-];
+let chart;
 
-let chart = null;
-
-function carregarKPIs() {
-  document.getElementById("kpi-veiculo").textContent = fakeKPIs.veiculo.modelo;
-  document.getElementById("kpi-veiculo-sub").textContent = "Placa " + fakeKPIs.veiculo.placa;
-
-  document.getElementById("kpi-consumo").textContent =
-    fakeKPIs.consumo.medio.toFixed(1).replace(".", ",") + " km/L";
-  document.getElementById("kpi-consumo-sub").textContent = fakeKPIs.consumo.periodo;
-
-  document.getElementById("kpi-km").textContent =
-    fakeKPIs.km.atual.toLocaleString("pt-BR");
-  document.getElementById("kpi-km-sub").textContent =
-    "Atualizado " + fakeKPIs.km.atualizado;
-
-  document.getElementById("kpi-manut").textContent = fakeKPIs.manutencao.tipo;
-  document.getElementById("kpi-manut-sub").textContent =
-    "em " + fakeKPIs.manutencao.restanteKm.toLocaleString("pt-BR") + " km";
-}
-
-function criarGrafico(dados) {
-  const ctx = document.getElementById("consumoChart").getContext("2d");
-
+function renderGrafico(dados) {
   if (chart) chart.destroy();
 
   chart = new Chart(ctx, {
-    type: "line",
+    type: 'line',
     data: {
-      labels: dados.map(d => d.dia),
+      labels: dados.map(d => d.data),
       datasets: [{
-        label: "Consumo km/L",
-        data: dados.map(d => d.consumo),
-        borderColor: "#3b82f6",
-        backgroundColor: "rgba(59,130,246,0.15)",
-        tension: 0.4,
+        label: 'km/L',
+        data: dados.map(d => d.valor),
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59,130,246,0.2)',
+        tension: 0.3,
         fill: true
       }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } }
     }
   });
 }
 
-function aplicarFiltro(dias) {
-  const filtrado = dias === 30
-    ? consumoHistorico.slice(-5)
-    : consumoHistorico;
-
-  criarGrafico(filtrado);
+function filtrar(dias) {
+  const dados = dias === 30 ? dados30 : dados60;
+  renderGrafico(dados);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  carregarKPIs();
-  aplicarFiltro(30);
+const dados30 = [
+  { data: '01/01', valor: 12.1 },
+  { data: '05/01', valor: 12.5 },
+  { data: '10/01', valor: 12.8 }
+];
+
+const dados60 = [
+  { data: '01/12', valor: 11.9 },
+  { data: '15/12', valor: 12.0 },
+  { data: '01/01', valor: 12.1 },
+  { data: '10/01', valor: 12.8 }
+];
+
+renderGrafico(dados30);
+
+const historico = [
+  ['10/01/2026','Abastecimento','Gasolina','132.745','279,90'],
+  ['22/12/2025','Manutenção','Troca de óleo','130.500','180,00']
+];
+
+const tbody = document.getElementById('historico');
+historico.forEach(r => {
+  const tr = document.createElement('tr');
+  r.forEach(c => {
+    const td = document.createElement('td');
+    td.innerText = c;
+    tr.appendChild(td);
+  });
+  tbody.appendChild(tr);
 });
 
 function logout() {
-  window.location.href = "index.html";
+  window.location.href = 'index.html';
 }
