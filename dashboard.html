@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Dashboard Carro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css?v=3">
+  <link rel="stylesheet" href="css/style.css?v=4">
 </head>
 <body>
 
@@ -16,7 +16,6 @@
   <main class="dashboard">
 
     <section class="kpi-grid">
-
       <div class="kpi-card">
         <div class="kpi-title">Veículo</div>
         <div class="kpi-value" id="kpi-veiculo">—</div>
@@ -40,7 +39,26 @@
         <div class="kpi-value" id="kpi-manut">—</div>
         <div class="kpi-sub" id="kpi-manut-sub">—</div>
       </div>
+    </section>
 
+    <section class="table-section">
+      <h2>Histórico recente</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>KM</th>
+              <th>Valor (R$)</th>
+            </tr>
+          </thead>
+          <tbody id="historico-body">
+            <!-- preenchido via JS -->
+          </tbody>
+        </table>
+      </div>
     </section>
 
   </main>
