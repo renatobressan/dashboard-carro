@@ -9,15 +9,22 @@ const fakeKPIs = {
 };
 
 // ======================
-// Histórico fake
+// Histórico consumo fake
 // ======================
-const fakeHistorico = [
-  { data: "10/01", consumo: 12.8 },
-  { data: "15/01", consumo: 11.9 },
-  { data: "20/01", consumo: 12.4 },
-  { data: "25/01", consumo: 13.1 },
-  { data: "30/01", consumo: 12.6 }
+const consumoHistorico = [
+  { dia: "01/01", consumo: 12.2 },
+  { dia: "05/01", consumo: 12.6 },
+  { dia: "10/01", consumo: 12.8 },
+  { dia: "15/01", consumo: 11.9 },
+  { dia: "20/01", consumo: 12.4 },
+  { dia: "25/01", consumo: 13.1 },
+  { dia: "30/01", consumo: 12.6 },
+  { dia: "05/02", consumo: 12.9 },
+  { dia: "10/02", consumo: 13.0 },
+  { dia: "15/02", consumo: 12.7 }
 ];
+
+let chart = null;
 
 function carregarKPIs() {
   document.getElementById("kpi-veiculo").textContent = fakeKPIs.veiculo.modelo;
@@ -37,16 +44,18 @@ function carregarKPIs() {
     "em " + fakeKPIs.manutencao.restanteKm.toLocaleString("pt-BR") + " km";
 }
 
-function carregarGrafico() {
+function criarGrafico(dados) {
   const ctx = document.getElementById("consumoChart").getContext("2d");
 
-  new Chart(ctx, {
+  if (chart) chart.destroy();
+
+  chart = new Chart(ctx, {
     type: "line",
     data: {
-      labels: fakeHistorico.map(i => i.data),
+      labels: dados.map(d => d.dia),
       datasets: [{
         label: "Consumo km/L",
-        data: fakeHistorico.map(i => i.consumo),
+        data: dados.map(d => d.consumo),
         borderColor: "#3b82f6",
         backgroundColor: "rgba(59,130,246,0.15)",
         tension: 0.4,
@@ -55,21 +64,22 @@ function carregarGrafico() {
     },
     options: {
       responsive: true,
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        y: {
-          beginAtZero: false
-        }
-      }
+      plugins: { legend: { display: false } }
     }
   });
 }
 
+function aplicarFiltro(dias) {
+  const filtrado = dias === 30
+    ? consumoHistorico.slice(-5)
+    : consumoHistorico;
+
+  criarGrafico(filtrado);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   carregarKPIs();
-  carregarGrafico();
+  aplicarFiltro(30);
 });
 
 function logout() {
