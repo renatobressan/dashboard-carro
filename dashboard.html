@@ -3,60 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <title>Dashboard Carro</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css?v=7">
+
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
   <header class="topbar">
     <h1>Dashboard Carro</h1>
-    <button class="btn-logout" onclick="logout()">Sair</button>
+    <button onclick="logout()">Sair</button>
   </header>
 
-  <main class="dashboard">
+  <section class="kpi-grid">
+    <div class="kpi-card">
+      <span>Veículo</span>
+      <strong>FOX 1.0</strong>
+    </div>
 
-    <section class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-title">Veículo</div>
-        <div class="kpi-value" id="kpi-veiculo">—</div>
-        <div class="kpi-sub" id="kpi-veiculo-sub">—</div>
+    <div class="kpi-card">
+      <span>Placa</span>
+      <strong>ABC-1234</strong>
+    </div>
+
+    <div class="kpi-card">
+      <span>Consumo médio</span>
+      <strong id="kpi-consumo">12,4 km/L</strong>
+    </div>
+
+    <div class="kpi-card">
+      <span>KM atual</span>
+      <strong id="kpi-km">132.745</strong>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-header">
+      <h2>Consumo (km/L)</h2>
+      <div class="filtros">
+        <button onclick="filtrar(30)">30d</button>
+        <button onclick="filtrar(60)">60d</button>
       </div>
+    </div>
+    <canvas id="graficoConsumo"></canvas>
+  </section>
 
-      <div class="kpi-card">
-        <div class="kpi-title">Consumo médio</div>
-        <div class="kpi-value" id="kpi-consumo">—</div>
-        <div class="kpi-sub" id="kpi-consumo-sub">—</div>
-      </div>
+  <section class="card">
+    <h2>Histórico recente</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Tipo</th>
+          <th>Descrição</th>
+          <th>KM</th>
+          <th>Valor (R$)</th>
+        </tr>
+      </thead>
+      <tbody id="historico"></tbody>
+    </table>
+  </section>
 
-      <div class="kpi-card">
-        <div class="kpi-title">KM atual</div>
-        <div class="kpi-value" id="kpi-km">—</div>
-        <div class="kpi-sub" id="kpi-km-sub">—</div>
-      </div>
-
-      <div class="kpi-card">
-        <div class="kpi-title">Próxima manutenção</div>
-        <div class="kpi-value" id="kpi-manut">—</div>
-        <div class="kpi-sub" id="kpi-manut-sub">—</div>
-      </div>
-    </section>
-
-    <section class="chart-section">
-      <div class="chart-header">
-        <h2>Consumo (km/L)</h2>
-        <div class="chart-filters">
-          <button onclick="aplicarFiltro(30)">30d</button>
-          <button onclick="aplicarFiltro(60)">60d</button>
-        </div>
-      </div>
-      <div class="chart-box">
-        <canvas id="consumoChart"></canvas>
-      </div>
-    </section>
-
-  </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="js/dashboard.js"></script>
 </body>
 </html>
