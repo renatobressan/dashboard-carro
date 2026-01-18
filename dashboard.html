@@ -1,75 +1,64 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Dashboard Carro</title>
-
-  <!-- Favicon -->
-  <link rel="icon" href="favicon.ico">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- CSS -->
-  <link rel="stylesheet" href="css/dashboard.css">
-
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="css/dashboard.css" />
 </head>
-<body>
 
+<body>
   <header class="topbar">
     <h1>Dashboard Carro</h1>
-    <button onclick="logout()">Sair</button>
+    <button id="btnLogout">Sair</button>
   </header>
 
-  <section class="kpi-grid">
-    <div class="kpi-card">
-      <span>Veículo</span>
-      <strong>FOX 1.0</strong>
-    </div>
-
-    <div class="kpi-card">
-      <span>Placa</span>
-      <strong>ABC-1234</strong>
-    </div>
-
-    <div class="kpi-card">
-      <span>Consumo médio</span>
-      <strong id="kpi-consumo">12,4 km/L</strong>
-    </div>
-
-    <div class="kpi-card">
-      <span>KM atual</span>
-      <strong id="kpi-km">132.745</strong>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="card-header">
-      <h2>Consumo (km/L)</h2>
-      <div class="filtros">
-        <button onclick="filtrar(30)">30d</button>
-        <button onclick="filtrar(60)">60d</button>
+  <main class="container">
+    <!-- KPIs -->
+    <section class="kpis">
+      <div class="kpi">
+        <span>Veículo</span>
+        <strong id="kpiVeiculo">-</strong>
       </div>
-    </div>
-    <canvas id="graficoConsumo"></canvas>
-  </section>
+      <div class="kpi">
+        <span>Placa</span>
+        <strong id="kpiPlaca">-</strong>
+      </div>
+      <div class="kpi">
+        <span>Consumo médio</span>
+        <strong id="kpiConsumo">-</strong>
+      </div>
+      <div class="kpi">
+        <span>KM atual</span>
+        <strong id="kpiKm">-</strong>
+      </div>
+    </section>
 
-  <section class="card">
-    <h2>Histórico recente</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Data</th>
-          <th>Tipo</th>
-          <th>Descrição</th>
-          <th>KM</th>
-          <th>Valor (R$)</th>
-        </tr>
-      </thead>
-      <tbody id="historico"></tbody>
-    </table>
-  </section>
+    <!-- Histórico -->
+    <section class="historico">
+      <h2>Histórico</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Tipo</th>
+            <th>Item</th>
+            <th>KM</th>
+            <th>Valor</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaHistorico">
+          <tr><td colspan="5">Carregando...</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
 
-  <!-- JS -->
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
   <script src="js/dashboard.js"></script>
 </body>
 </html>
