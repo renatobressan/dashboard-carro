@@ -4,7 +4,7 @@
 
 console.log("Carregando supabase.js");
 
-const SUPABASE_URL = "https://fzcliwwxzwomwfeevds.supabase.co";
+const SUPABASE_URL = "https://fzcliwxwzkwomvfeevds.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_nJW2y3Z0E1I_cQUN67-nbg_CepDJiVQ";
 
 if (!window.supabase) {
