@@ -1,21 +1,17 @@
 
-// js/supabase.js
-// Cliente Supabase - versão com debug
+// ===============================
+// SUPABASE CLIENT
+// ===============================
 
-console.log("Carregando supabase.js");
-
+// SUBSTITUA pelos dados do seu projeto
 const SUPABASE_URL = "https://fzcliwxwzkwomvfeevds.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_nJW2y3Z0E1I_cQUN67-nbg_CepDJiVQ";
 
-if (!window.supabase) {
-  console.error("SDK do Supabase não carregou");
-} else {
-  console.log("SDK do Supabase carregado");
-}
-
-window.sb = window.supabase.createClient(
+// Cliente Supabase (GLOBAL)
+const sb = supabase.createClient(
   SUPABASE_URL,
   SUPABASE_ANON_KEY
 );
 
-console.log("Cliente Supabase criado:", window.sb);
+// Debug opcional
+console.log("Supabase conectado:", sb);
