@@ -12,10 +12,11 @@ const fakeKPIs = {
 // Histórico fake
 // ======================
 const fakeHistorico = [
-  { data: "10/01/2026", tipo: "Abastecimento", desc: "Gasolina comum", km: 132745, valor: 279.90 },
-  { data: "22/12/2025", tipo: "Manutenção", desc: "Troca de óleo", km: 130500, valor: 180.00 },
-  { data: "05/12/2025", tipo: "Abastecimento", desc: "Gasolina aditivada", km: 129980, valor: 265.40 },
-  { data: "18/11/2025", tipo: "Manutenção", desc: "Filtro de ar", km: 128900, valor: 75.00 }
+  { data: "10/01", consumo: 12.8 },
+  { data: "15/01", consumo: 11.9 },
+  { data: "20/01", consumo: 12.4 },
+  { data: "25/01", consumo: 13.1 },
+  { data: "30/01", consumo: 12.6 }
 ];
 
 function carregarKPIs() {
@@ -36,26 +37,39 @@ function carregarKPIs() {
     "em " + fakeKPIs.manutencao.restanteKm.toLocaleString("pt-BR") + " km";
 }
 
-function carregarHistorico() {
-  const tbody = document.getElementById("historico-body");
-  tbody.innerHTML = "";
+function carregarGrafico() {
+  const ctx = document.getElementById("consumoChart").getContext("2d");
 
-  fakeHistorico.forEach(item => {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${item.data}</td>
-      <td>${item.tipo}</td>
-      <td>${item.desc}</td>
-      <td>${item.km.toLocaleString("pt-BR")}</td>
-      <td>R$ ${item.valor.toFixed(2).replace(".", ",")}</td>
-    `;
-    tbody.appendChild(tr);
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: fakeHistorico.map(i => i.data),
+      datasets: [{
+        label: "Consumo km/L",
+        data: fakeHistorico.map(i => i.consumo),
+        borderColor: "#3b82f6",
+        backgroundColor: "rgba(59,130,246,0.15)",
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: false
+        }
+      }
+    }
   });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   carregarKPIs();
-  carregarHistorico();
+  carregarGrafico();
 });
 
 function logout() {
