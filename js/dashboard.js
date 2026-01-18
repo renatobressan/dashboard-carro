@@ -1,62 +1,85 @@
-const ctx = document.getElementById('graficoConsumo');
+// ===============================
+// DASHBOARD - DADOS REAIS
+// ===============================
 
-let chart;
+(async () => {
+  try {
+    // 1) Verifica usuário autenticado
+    const { data: authData, error: authError } = await sb.auth.getUser();
 
-function renderGrafico(dados) {
-  if (chart) chart.destroy();
-
-  chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: dados.map(d => d.data),
-      datasets: [{
-        label: 'km/L',
-        data: dados.map(d => d.valor),
-        borderColor: '#3b82f6',
-        backgroundColor: 'rgba(59,130,246,0.2)',
-        tension: 0.3,
-        fill: true
-      }]
+    if (authError || !authData?.user) {
+      console.warn("Usuário não autenticado. Redirecionando...");
+      window.location.href = "index.html";
+      return;
     }
-  });
-}
 
-function filtrar(dias) {
-  const dados = dias === 30 ? dados30 : dados60;
-  renderGrafico(dados);
-}
+    const userId = authData.user.id;
+    console.log("Usuário logado:", userId);
 
-const dados30 = [
-  { data: '01/01', valor: 12.1 },
-  { data: '05/01', valor: 12.5 },
-  { data: '10/01', valor: 12.8 }
-];
+    // 2) Buscar dados reais da tabela Base_Hist
+    const { data, error } = await sb
+      .from("Base_Hist")
+      .select("*")
+      .eq("user_id", userId)
+      .order("Data", { ascending: false })
+      .limit(50);
 
-const dados60 = [
-  { data: '01/12', valor: 11.9 },
-  { data: '15/12', valor: 12.0 },
-  { data: '01/01', valor: 12.1 },
-  { data: '10/01', valor: 12.8 }
-];
+    if (error) {
+      console.error("Erro ao buscar Base_Hist:", error);
+      return;
+    }
 
-renderGrafico(dados30);
+    console.log("Dados Base_Hist:", data);
 
-const historico = [
-  ['10/01/2026','Abastecimento','Gasolina','132.745','279,90'],
-  ['22/12/2025','Manutenção','Troca de óleo','130.500','180,00']
-];
+    // 3) KPIs básicos (exemplo)
+    if (data.length > 0) {
+      const ultimo = data[0];
 
-const tbody = document.getElementById('historico');
-historico.forEach(r => {
-  const tr = document.createElement('tr');
-  r.forEach(c => {
-    const td = document.createElement('td');
-    td.innerText = c;
-    tr.appendChild(td);
-  });
-  tbody.appendChild(tr);
-});
+      document.getElementById("kpiVeiculo").innerText =
+        ultimo.Modelo || "-";
 
-function logout() {
-  window.location.href = 'index.html';
-}
+      document.getElementById("kpiPlaca").innerText =
+        ultimo.Placa || "-";
+
+      document.getElementById("kpiKm").innerText =
+        ultimo["Odômetro (KM)"] || "-";
+
+      // Consumo médio simples (exemplo)
+      const consumos = data
+        .filter(d => d.Quantidade && d["Odômetro (KM)"])
+        .map(d => Number(d.Quantidade));
+
+      if (consumos.length) {
+        const media =
+          consumos.reduce((a, b) => a + b, 0) / consumos.length;
+        document.getElementById("kpiConsumo").innerText =
+          media.toFixed(2) + " km/L";
+      }
+    }
+
+    // 4) Preencher tabela de histórico
+    const tbody = document.getElementById("tabelaHistorico");
+    tbody.innerHTML = "";
+
+    data.forEach(row => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${row.Data || "-"}</td>
+        <td>${row.Tipo || "-"}</td>
+        <td>${row.Item || "-"}</td>
+        <td>${row["Odômetro (KM)"] || "-"}</td>
+        <td>R$ ${row["Valor Total"] || "-"}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    // 5) Logout
+    document.getElementById("btnLogout").onclick = async () => {
+      await sb.auth.signOut();
+      window.location.href = "index.html";
+    };
+
+  } catch (e) {
+    console.error("Erro inesperado no dashboard:", e);
+  }
+})();
