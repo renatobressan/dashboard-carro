@@ -7,7 +7,7 @@
   <!-- Favicon -->
   <link rel="icon" href="favicon.ico">
 
-  <!-- CSS -->
+  <!-- CSS do Login -->
   <link rel="stylesheet" href="css/login.css">
 </head>
 <body>
@@ -16,10 +16,10 @@
     <h1>Dashboard Carro</h1>
 
     <div class="login-box">
-      <label>Login</label>
-      <input type="text" id="login" placeholder="Digite seu login">
+      <label for="login">E-mail</label>
+      <input type="email" id="login" placeholder="Digite seu e-mail">
 
-      <label>Senha</label>
+      <label for="senha">Senha</label>
       <input type="password" id="senha" placeholder="Digite sua senha">
 
       <button onclick="login()">Entrar</button>
@@ -28,7 +28,14 @@
     </div>
   </div>
 
-  <!-- JS -->
+  <!-- Supabase SDK (OBRIGATÓRIO) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Cliente Supabase -->
+  <script src="js/supabase.js"></script>
+
+  <!-- Login -->
   <script src="js/login.js"></script>
+
 </body>
 </html>
