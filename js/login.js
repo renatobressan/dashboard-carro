@@ -1,33 +1,43 @@
-// login.js
-// Login real com Supabase Auth
+// js/login.js
+// Login com Supabase Auth - versão com debug detalhado
 
 async function login() {
-  const emailInput = document.getElementById("login");
-  const senhaInput = document.getElementById("senha");
+  const email = document.getElementById("login")?.value;
+  const senha = document.getElementById("senha")?.value;
   const erro = document.getElementById("login-erro");
 
   erro.textContent = "";
 
-  if (!emailInput.value || !senhaInput.value) {
+  if (!email || !senha) {
     erro.textContent = "E-mail e senha obrigatórios";
     return;
   }
 
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: emailInput.value,
-      password: senhaInput.value
-    });
-
-    if (error) {
-      erro.textContent = "Login inválido";
+    if (!window.sb) {
+      erro.textContent = "Supabase não inicializado";
+      console.error("window.sb não existe");
       return;
     }
 
-    // Login OK
+    console.log("Tentando login com:", email);
+
+    const { data, error } = await window.sb.auth.signInWithPassword({
+      email,
+      password: senha
+    });
+
+    console.log("Resposta Supabase:", data, error);
+
+    if (error) {
+      erro.textContent = error.message;
+      return;
+    }
+
     window.location.href = "dashboard.html";
 
   } catch (e) {
-    erro.textContent = "Erro inesperado no login";
+    console.error("Erro real no login:", e);
+    erro.textContent = "Erro inesperado no login (ver console)";
   }
 }
