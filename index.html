@@ -1,40 +1,34 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Login - Dashboard Carro</title>
+  <meta charset="UTF-8" />
+  <title>Dashboard Carro - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Favicon -->
-  <link rel="icon" href="favicon.ico">
-
-  <!-- CSS do Login -->
-  <link rel="stylesheet" href="css/login.css">
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/dashboard.css" />
 </head>
-<body>
 
+<body class="login-page">
   <div class="login-container">
     <h1>Dashboard Carro</h1>
 
-    <div class="login-box">
-      <label for="login">E-mail</label>
-      <input type="email" id="login" placeholder="Digite seu e-mail">
+    <div class="login-form">
+      <label for="email">E-mail</label>
+      <input type="email" id="email" placeholder="Digite seu e-mail" />
 
       <label for="senha">Senha</label>
-      <input type="password" id="senha" placeholder="Digite sua senha">
+      <input type="password" id="senha" placeholder="Digite sua senha" />
 
+      <button id="btnLogin">Entrar</button>
 
-      <p id="login-erro"></p>
+      <p id="loginErro" class="erro"></p>
     </div>
   </div>
 
-  <!-- Supabase SDK (OBRIGATÓRIO) -->
+  <!-- SUPABASE (ORDEM OBRIGATÓRIA) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- Cliente Supabase -->
   <script src="js/supabase.js"></script>
-
-  <!-- Login -->
   <script src="js/login.js"></script>
-
 </body>
 </html>
