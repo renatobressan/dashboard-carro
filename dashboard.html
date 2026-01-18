@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>Dashboard Carro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="css/style.css?v=4">
+  <link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body>
 
@@ -41,6 +41,13 @@
       </div>
     </section>
 
+    <section class="chart-section">
+      <h2>Consumo (km/L)</h2>
+      <div class="chart-box">
+        <canvas id="consumoChart"></canvas>
+      </div>
+    </section>
+
     <section class="table-section">
       <h2>Histórico recente</h2>
       <div class="table-wrap">
@@ -54,15 +61,14 @@
               <th>Valor (R$)</th>
             </tr>
           </thead>
-          <tbody id="historico-body">
-            <!-- preenchido via JS -->
-          </tbody>
+          <tbody id="historico-body"></tbody>
         </table>
       </div>
     </section>
 
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="js/dashboard.js"></script>
 </body>
 </html>
