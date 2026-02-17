@@ -3,35 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Car Dashboard</title>
-
-  <link rel="stylesheet" href="css/dashboard.css">
+  <title>Dashboard - Car Dashboard</title>
 
   <style>
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: Arial, sans-serif;
       background: #f3f4f6;
     }
 
-    .app-header {
-      background: linear-gradient(135deg, #2563eb, #1e40af);
+    .header {
+      background: #2563eb;
       color: white;
       padding: 20px;
-      border-bottom-left-radius: 25px;
-      border-bottom-right-radius: 25px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
-
-    .app-header h1 {
-      margin: 0;
-      font-size: 22px;
-    }
-
-    .user-info {
-      margin-top: 8px;
-      font-size: 13px;
-      opacity: 0.9;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
     }
 
     .container {
@@ -43,63 +29,34 @@
     .card {
       background: white;
       padding: 20px;
-      border-radius: 20px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-      margin-bottom: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      margin-top: 20px;
     }
 
-    .card h2 {
-      margin-top: 0;
-      font-size: 18px;
-    }
-
-    .logout-btn {
-      margin-top: 15px;
+    button {
       padding: 10px 15px;
       border: none;
-      border-radius: 10px;
+      border-radius: 8px;
       background: #ef4444;
       color: white;
       cursor: pointer;
-      font-weight: 500;
-      transition: 0.3s;
-    }
-
-    .logout-btn:hover {
-      background: #dc2626;
     }
   </style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <div class="app-header">
-    <h1>🚗 Car Dashboard</h1>
-    <div class="user-info" id="userEmail">
-      Carregando usuário...
-    </div>
+  <div class="header">
+    <h2>🚗 Car Dashboard</h2>
+    <div id="userEmail">Carregando usuário...</div>
   </div>
 
-  <!-- CONTEÚDO -->
   <div class="container">
-
     <div class="card">
-      <h2>Bem-vindo ao sistema</h2>
-      <p>Seu painel está protegido com autenticação Supabase.</p>
-      <button class="logout-btn" onclick="logout()">Sair</button>
+      <p>Você está logado com sucesso.</p>
+      <button onclick="logout()">Sair</button>
     </div>
-
-    <div class="card">
-      <h2>Próximos passos</h2>
-      <ul>
-        <li>Associar dados ao usuário logado</li>
-        <li>Salvar carros por usuário</li>
-        <li>Salvar abastecimentos</li>
-        <li>Salvar manutenções</li>
-      </ul>
-    </div>
-
   </div>
 
   <!-- SUPABASE -->
@@ -109,18 +66,25 @@
   <script>
     document.addEventListener("DOMContentLoaded", async function () {
 
-      // Protege a página
-      await protectPage();
+      // 1️⃣ Verifica se está logado
+      const { data: { session } } = await supabase.auth.getSession();
 
-      // Pega usuário logado
-      const user = await getUser();
-
-      if (user) {
-        document.getElementById("userEmail").textContent =
-          "Logado como: " + user.email;
+      if (!session) {
+        window.location.href = "index.html";
+        return;
       }
 
+      // 2️⃣ Mostra email do usuário
+      const { data: { user } } = await supabase.auth.getUser();
+      document.getElementById("userEmail").textContent =
+        "Logado como: " + user.email;
     });
+
+    // 3️⃣ Logout
+    async function logout() {
+      await supabase.auth.signOut();
+      window.location.href = "index.html";
+    }
   </script>
 
 </body>
