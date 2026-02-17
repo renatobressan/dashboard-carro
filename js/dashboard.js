@@ -7,35 +7,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     return;
   }
 
-  loadDashboard();
+  loadDashboard(user.id);
 
 });
 
-async function loadDashboard() {
+async function loadDashboard(userId) {
 
   const { data, error } = await window.sb
     .from("Base_Hist")
     .select("*")
+    .eq("user_id", userId)
     .ilike("Tipo", "%abastecimento%");
 
   if (error) {
-    console.error("Erro ao buscar Base_Hist:", error);
+    console.error(error);
     alert("Erro ao carregar dados.");
     return;
   }
 
   if (!data || data.length < 2) {
-    console.warn("Dados insuficientes para cálculo.");
+    console.warn("Dados insuficientes.");
     return;
   }
 
-  // Converter Data (texto dd/mm/yyyy) para objeto Date real
+  // Converter data texto para Date real
   data.forEach(row => {
     const [dia, mes, ano] = row["Data"].split("/");
     row._dataReal = new Date(`${ano}-${mes}-${dia}`);
   });
 
-  // Ordenar corretamente pela data
+  // Ordenar por data
   data.sort((a, b) => b._dataReal - a._dataReal);
 
   const ultimo = data[0];
@@ -49,10 +50,10 @@ async function loadDashboard() {
   const distancia = kmAtual - kmAnterior;
   const consumo = distancia / litros;
 
-  // ===== MÉDIA ÚLTIMAS 20 =====
-
+  // Média últimas 20
   const ultimos20 = data.slice(0, 20);
-  let somaConsumo = 0;
+
+  let soma = 0;
   let contador = 0;
 
   for (let i = 0; i < ultimos20.length - 1; i++) {
@@ -64,38 +65,99 @@ async function loadDashboard() {
     const distTemp = km1 - km2;
     const consTemp = distTemp / litrosTemp;
 
-    if (!isNaN(consTemp) && isFinite(consTemp)) {
-      somaConsumo += consTemp;
+    if (!isNaN(consTemp)) {
+      soma += consTemp;
       contador++;
     }
-
   }
 
-  const media = contador > 0 ? somaConsumo / contador : 0;
+  const media = contador > 0 ? soma / contador : 0;
 
-  // ===== ATUALIZAR CARDS =====
+  // Atualizar cards
+  document.getElementById("cardData").innerText = ultimo["Data"];
+  document.getElementById("cardValor").innerText = `R$ ${valor.toFixed(2)}`;
+  document.getElementById("cardKm").innerText = kmAtual.toLocaleString();
+  document.getElementById("cardConsumo").innerText = consumo.toFixed(2) + " km/L";
+  document.getElementById("cardMedia").innerText = "média: " + media.toFixed(2) + " km/L";
 
-  const elData = document.getElementById("cardData");
-  const elValor = document.getElementById("cardValor");
-  const elKm = document.getElementById("cardKm");
-  const elConsumo = document.getElementById("cardConsumo");
-  const elMedia = document.getElementById("cardMedia");
-  const elContainer = document.getElementById("baseHistContainer");
+  renderChart(ultimos20);
+  renderHistorico(data);
 
-  if (!elData || !elValor || !elKm || !elConsumo || !elMedia || !elContainer) {
-    console.error("Algum ID do dashboard não foi encontrado no HTML.");
-    return;
+}
+
+function renderChart(dados) {
+
+  const labels = [];
+  const valores = [];
+
+  for (let i = dados.length - 1; i > 0; i--) {
+
+    const atual = dados[i - 1];
+    const anterior = dados[i];
+
+    const km1 = Number(atual["Odômetro (KM)"]);
+    const km2 = Number(anterior["Odômetro (KM)"]);
+    const litros = Number(atual["Quantidade"]);
+
+    const distancia = km1 - km2;
+    const consumo = distancia / litros;
+
+    if (!isNaN(consumo)) {
+      labels.push(atual["Data"]);
+      valores.push(consumo.toFixed(2));
+    }
   }
 
-  elData.innerText = ultimo["Data"];
-  elValor.innerText = `R$ ${valor.toFixed(2)}`;
-  elKm.innerText = kmAtual.toLocaleString();
-  elConsumo.innerText = consumo.toFixed(2) + " km/L";
-  elMedia.innerText = "média: " + media.toFixed(2) + " km/L";
+  const ctx = document.getElementById("consumoChart");
 
-  // ===== BASE HIST =====
+  new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [{
+        label: "Consumo (km/L)",
+        data: valores,
+        borderColor: "#38bdf8",
+        backgroundColor: "rgba(56,189,248,0.1)",
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          labels: { color: "#fff" }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: "#94a3b8" },
+          grid: { color: "rgba(255,255,255,0.05)" }
+        },
+        y: {
+          ticks: { color: "#94a3b8" },
+          grid: { color: "rgba(255,255,255,0.05)" }
+        }
+      }
+    }
+  });
+}
 
-  elContainer.innerHTML = "";
+function renderHistorico(data) {
+
+  const container = document.getElementById("baseHistContainer");
+
+  container.innerHTML = `
+    <div class="hist-header">
+      <div>Data</div>
+      <div>Item</div>
+      <div>Local</div>
+      <div>KM</div>
+      <div>Qtd</div>
+      <div>Total</div>
+    </div>
+  `;
 
   data.forEach(row => {
 
@@ -103,14 +165,14 @@ async function loadDashboard() {
     div.classList.add("hist-row");
 
     div.innerHTML = `
-      <strong>${row["Data"]}</strong> |
-      KM: ${Number(row["Odômetro (KM)"]).toLocaleString()} |
-      Litros: ${row["Quantidade"]} |
-      Total: R$ ${Number(row["Valor Total"]).toFixed(2)}
+      <div>${row["Data"]}</div>
+      <div>${row["Item"]}</div>
+      <div>${row["Local"]}</div>
+      <div>${Number(row["Odômetro (KM)"]).toLocaleString()}</div>
+      <div>${row["Quantidade"]}</div>
+      <div>R$ ${Number(row["Valor Total"]).toFixed(2)}</div>
     `;
 
-    elContainer.appendChild(div);
-
+    container.appendChild(div);
   });
-
 }
