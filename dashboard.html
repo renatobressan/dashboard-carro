@@ -3,72 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Car Dashboard</title>
-
-  <link rel="stylesheet" href="/dashboard-carro/css/dashboard.css">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f3f4f6;
-    }
-
-    .header {
-      background: #2563eb;
-      color: white;
-      padding: 20px;
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
-    }
-
-    .container {
-      padding: 20px;
-      max-width: 500px;
-      margin: auto;
-    }
-
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-      margin-top: 20px;
-    }
-
-    button {
-      padding: 10px 15px;
-      border: none;
-      border-radius: 8px;
-      background: #ef4444;
-      color: white;
-      cursor: pointer;
-    }
-  </style>
+  <title>Dashboard</title>
 </head>
 
 <body>
 
-  <div class="header">
-    <h2>🚗 Car Dashboard</h2>
-    <div id="userEmail">Carregando usuário...</div>
-  </div>
+  <h2>Dashboard</h2>
+  <div id="userEmail"></div>
+  <button onclick="logout()">Sair</button>
 
-  <div class="container">
-    <div class="card">
-      <p>Você está logado com sucesso.</p>
-      <button onclick="logout()">Sair</button>
-    </div>
-  </div>
-
-  <!-- SUPABASE -->
+  <!-- IMPORTANTE: só carregar uma vez -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/dashboard-carro/js/supabase.js"></script>
 
   <script>
     document.addEventListener("DOMContentLoaded", async function () {
 
-      // Verifica sessão
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
@@ -76,13 +26,11 @@
         return;
       }
 
-      // Mostra email
       const { data: { user } } = await supabase.auth.getUser();
       document.getElementById("userEmail").textContent =
         "Logado como: " + user.email;
     });
 
-    // Logout
     async function logout() {
       await supabase.auth.signOut();
       window.location.href = "/dashboard-carro/index.html";
