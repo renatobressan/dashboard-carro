@@ -1,75 +1,63 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard – Abastecimento & Manutenção</title>
-
-<link rel="stylesheet" href="./css/dashboard.css">
-<link rel="stylesheet" href="./css/style.css">
-
+  <meta charset="UTF-8">
+  <title>Dashboard – Car Dashboard</title>
+  <link rel="stylesheet" href="./css/dashboard.css">
 </head>
 
 <body>
 
 <div class="dashboard-wrapper">
 
-  <h1 class="dashboard-title">
-    Dashboard – Abastecimento & Manutenção
-  </h1>
+  <h1>Dashboard – Abastecimento & Manutenção</h1>
 
-  <!-- ===== CARDS SUPERIORES ===== -->
-  <div class="cards-container">
+  <!-- CARDS -->
+  <div class="cards-grid">
 
     <div class="card">
-      <span class="card-label">Última Data de Abastecimento</span>
-      <span class="card-value" id="cardData">--</span>
-      <span class="card-footer">Local do último Abastecimento</span>
+      <h3>Última Data de Abastecimento</h3>
+      <p id="cardData">--</p>
+      <span>Local do último Abastecimento</span>
     </div>
 
     <div class="card">
-      <span class="card-label">Valor Pago (Último Abastecimento)</span>
-      <span class="card-value" id="cardValor">R$ --</span>
-      <span class="card-footer">Valor Pago – Litros abastecidos</span>
+      <h3>Valor Pago (Último Abastecimento)</h3>
+      <p id="cardValor">R$ --</p>
+      <span>Valor Pago – Litros abastecidos</span>
     </div>
 
     <div class="card">
-      <span class="card-label">Odômetro (KM) no Abastecimento</span>
-      <span class="card-value" id="cardKm">--</span>
-      <span class="card-footer">Distância desde o Anterior</span>
+      <h3>Odômetro (KM) no Abastecimento</h3>
+      <p id="cardKm">--</p>
+      <span>Distância desde o Anterior</span>
     </div>
 
     <div class="card">
-      <span class="card-label">Consumo (Km/L)</span>
-      <span class="card-value" id="cardConsumo">--</span>
-      <span class="card-footer" id="cardMedia">média: -- km/L</span>
+      <h3>Consumo (Km/L)</h3>
+      <p id="cardConsumo">-- km/L</p>
+      <span id="cardMedia">média: -- km/L</span>
     </div>
 
   </div>
 
-  <!-- ===== GRÁFICO (placeholder) ===== -->
-  <div class="chart-container">
-    <div class="chart-header">
-      <span>Consumo (KM/L) – últimas 20 datas</span>
-      <span id="chartInfo"></span>
-    </div>
-
-    <div class="chart-body">
-      Aqui será renderizado o gráfico de linhas
-    </div>
+  <!-- GRÁFICO -->
+  <div class="chart-card">
+    <h2>Consumo (KM/L) – últimas 20 datas</h2>
+    <canvas id="consumoChart"></canvas>
   </div>
 
-  <!-- ===== BASE HIST ===== -->
-  <div class="base-hist-container">
-    <h2>Abastecimento</h2>
+  <!-- HISTÓRICO -->
+  <div class="hist-card">
+    <h2>Histórico de Abastecimento</h2>
     <div id="baseHistContainer"></div>
   </div>
 
 </div>
 
-<!-- ===== SCRIPTS ===== -->
-
+<!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="./js/supabase.js"></script>
 <script src="./js/dashboard.js"></script>
 
