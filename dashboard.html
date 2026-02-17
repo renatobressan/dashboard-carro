@@ -1,39 +1,102 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Car Dashboard</title>
-<link rel="stylesheet" href="./css/dashboard.css">
-</head>
+document.addEventListener("DOMContentLoaded", async () => {
 
-<body>
+  const { data: { user } } = await window.sb.auth.getUser();
 
-<div class="dashboard-container">
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
 
-<header>
-<h1>🚗 Meus Carros</h1>
-<button onclick="logout()">Sair</button>
-</header>
+  loadDashboard();
 
-<section>
-<h2>Novo Carro</h2>
-<input type="text" id="marca" placeholder="Marca">
-<input type="text" id="modelo" placeholder="Modelo">
-<input type="text" id="placa" placeholder="Placa">
-<button onclick="addCar()">Salvar</button>
-</section>
+});
 
-<section>
-<h2>Lista de Carros</h2>
-<div id="carList"></div>
-</section>
+async function loadDashboard() {
 
-</div>
+  const { data, error } = await window.sb
+    .from("Base_Hist")
+    .select("*")
+    .eq("Tipo", "Abastecimento")
+    .order("id", { ascending: false });
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="./js/supabase.js"></script>
-<script src="./js/dashboard.js"></script>
+  if (error) {
+    console.error(error);
+    alert("Erro ao carregar Base_Hist");
+    return;
+  }
 
-</body>
-</html>
+  if (!data || data.length < 2) {
+    alert("Dados insuficientes para cálculo");
+    return;
+  }
+
+  // Converter data texto para objeto Date para ordenação real
+  data.forEach(row => {
+    const [dia, mes, ano] = row["Data"].split("/");
+    row._dataReal = new Date(`${ano}-${mes}-${dia}`);
+  });
+
+  data.sort((a, b) => b._dataReal - a._dataReal);
+
+  const ultimo = data[0];
+  const anterior = data[1];
+
+  const kmAtual = Number(ultimo["Odômetro (KM)"]);
+  const kmAnterior = Number(anterior["Odômetro (KM)"]);
+  const litros = Number(ultimo["Quantidade"]);
+  const valor = Number(ultimo["Valor Total"]);
+
+  const distancia = kmAtual - kmAnterior;
+  const consumo = distancia / litros;
+
+  // Média últimas 20
+  const ultimos20 = data.slice(0, 20);
+  let somaConsumo = 0;
+  let contador = 0;
+
+  for (let i = 0; i < ultimos20.length - 1; i++) {
+    const km1 = Number(ultimos20[i]["Odômetro (KM)"]);
+    const km2 = Number(ultimos20[i + 1]["Odômetro (KM)"]);
+    const litrosTemp = Number(ultimos20[i]["Quantidade"]);
+
+    const distTemp = km1 - km2;
+    const consTemp = distTemp / litrosTemp;
+
+    if (!isNaN(consTemp)) {
+      somaConsumo += consTemp;
+      contador++;
+    }
+  }
+
+  const media = somaConsumo / contador;
+
+  // ===== Atualizar Cards =====
+
+  document.getElementById("cardData").innerText = ultimo["Data"];
+  document.getElementById("cardValor").innerText = `R$ ${valor.toFixed(2)}`;
+  document.getElementById("cardKm").innerText = kmAtual.toLocaleString();
+  document.getElementById("cardConsumo").innerText = consumo.toFixed(2) + " km/L";
+  document.getElementById("cardMedia").innerText = "média: " + media.toFixed(2) + " km/L";
+
+  // ===== Tabela Base_Hist =====
+
+  const container = document.getElementById("baseHistContainer");
+  container.innerHTML = "";
+
+  data.forEach(row => {
+
+    const div = document.createElement("div");
+    div.classList.add("hist-row");
+
+    div.innerHTML = `
+      <strong>${row["Data"]}</strong> |
+      KM: ${Number(row["Odômetro (KM)"]).toLocaleString()} |
+      Litros: ${row["Quantidade"]} |
+      Total: R$ ${Number(row["Valor Total"]).toFixed(2)}
+    `;
+
+    container.appendChild(div);
+
+  });
+
+}
