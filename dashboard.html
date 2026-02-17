@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Car Dashboard</title>
+  <title>Dashboard</title>
 </head>
 
 <body>
@@ -12,44 +12,44 @@
   <div id="userEmail">Carregando usuário...</div>
   <button onclick="logout()">Sair</button>
 
-  <!-- 1️⃣ Biblioteca Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Carrega biblioteca -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
-  <!-- 2️⃣ Configuração com suas informações -->
-  <script>
-    const SUPABASE_URL = "https://fzcliwxwzkwomvfeevds.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6Y2xpd3h3emt3b212ZmVldmRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgxNTcwMzEsImV4cCI6MjA4MzczMzAzMX0.filx-dFt2vVF42PPcVUTNgE_n2gW9Y1vChvHsf75Xn0";
-
-    const supabase = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
-  </script>
-
-  <!-- 3️⃣ Lógica do Dashboard -->
   <script>
     document.addEventListener("DOMContentLoaded", async function () {
 
-      // Verifica se há sessão ativa
-      const { data: { session } } = await supabase.auth.getSession();
+      if (!window.supabase) {
+        console.error("Biblioteca Supabase não carregou");
+        return;
+      }
+
+      const SUPABASE_URL = "https://fzcliwxwzkwomvfeevds.supabase.co";
+      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6Y2xpd3h3emt3b212ZmVldmRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgxNTcwMzEsImV4cCI6MjA4MzczMzAzMX0.filx-dFt2vVF42PPcVUTNgE_n2gW9Y1vChvHsf75Xn0";
+
+      const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+      const { data: { session } } =
+        await supabaseClient.auth.getSession();
 
       if (!session) {
         window.location.href = "/dashboard-carro/index.html";
         return;
       }
 
-      // Pega usuário logado
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } =
+        await supabaseClient.auth.getUser();
 
       document.getElementById("userEmail").textContent =
         "Logado como: " + user.email;
-    });
 
-    // Logout
-    async function logout() {
-      await supabase.auth.signOut();
-      window.location.href = "/dashboard-carro/index.html";
-    }
+      window.logout = async function () {
+        await supabaseClient.auth.signOut();
+        window.location.href = "/dashboard-carro/index.html";
+      };
+    });
   </script>
 
 </body>
