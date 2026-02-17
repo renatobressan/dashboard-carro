@@ -1,34 +1,44 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <title>Dashboard Carro - Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Dashboard - Login</title>
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="css/login.css">
 </head>
 
-<body class="login-page">
-  <div class="login-container">
-    <h1>Dashboard Carro</h1>
+<body>
 
-    <div class="login-form">
-      <label for="email">E-mail</label>
-      <input type="email" id="email" placeholder="Digite seu e-mail" />
+  <div class="app-container">
+    <div class="login-card">
+      <h1>🚗 Car Dashboard</h1>
+      <p>Faça login para continuar</p>
 
-      <label for="senha">Senha</label>
-      <input type="password" id="senha" placeholder="Digite sua senha" />
+      <form id="loginForm">
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="email" required>
+        </div>
 
-      <button id="btnLogin">Entrar</button>
+        <div class="input-group">
+          <label>Senha</label>
+          <input type="password" id="password" required>
+        </div>
 
-      <p id="loginErro" class="erro"></p>
+        <button type="submit" class="btn-login">Entrar</button>
+
+        <div class="error-msg" id="errorMsg">
+          Email ou senha inválidos
+        </div>
+      </form>
+
+      <div class="footer">
+        © 2026 Car Dashboard
+      </div>
     </div>
   </div>
 
-  <!-- SUPABASE (ORDEM OBRIGATÓRIA) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase.js"></script>
   <script src="js/login.js"></script>
 </body>
 </html>
