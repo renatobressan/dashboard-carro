@@ -1,27 +1,25 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.getElementById("loginForm");
-  const errorMsg = document.getElementById("errorMsg");
 
-  form.addEventListener("submit", async function (e) {
-    e.preventDefault();
+  form.addEventListener("submit", async (event) => {
 
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value.trim();
+    event.preventDefault();
 
-    errorMsg.textContent = "";
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    const { data, error } = await window.supabaseClient.auth.signInWithPassword({
+    const { error } = await sb.auth.signInWithPassword({
       email: email,
-      password: password,
+      password: password
     });
 
     if (error) {
-      errorMsg.textContent = "Email ou senha inválidos";
+      alert("Erro no login: " + error.message);
       return;
     }
 
-    window.location.href = "/dashboard-carro/dashboard.html";
+    window.location.href = "dashboard.html";
   });
 
 });
