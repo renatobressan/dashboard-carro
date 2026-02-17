@@ -15,20 +15,21 @@
   <input type="text" id="brand" placeholder="Marca">
   <input type="text" id="model" placeholder="Modelo">
   <input type="text" id="plate" placeholder="Placa">
-  <button onclick="addCar()">Salvar</button>
+  <button id="saveBtn">Salvar</button>
 
   <h3>Lista de Carros</h3>
   <ul id="carList"></ul>
 
-  <button onclick="logout()">Sair</button>
+  <button id="logoutBtn">Sair</button>
 
+  <!-- Carrega biblioteca Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
   <script>
     const SUPABASE_URL = "https://fzcliwxwzkwomvfeevds.supabase.co";
-    const SUPABASE_ANON_KEY = "SUA_ANON_KEY_AQUI";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6Y2xpd3h3emt3b212ZmVldmRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgxNTcwMzEsImV4cCI6MjA4MzczMzAzMX0.filx-dFt2vVF42PPcVUTNgE_n2gW9Y1vChvHsf75Xn0";
 
-    const supabase = window.supabase.createClient(
+    const supabaseClient = window.supabase.createClient(
       SUPABASE_URL,
       SUPABASE_ANON_KEY
     );
@@ -37,25 +38,28 @@
 
     document.addEventListener("DOMContentLoaded", async function () {
 
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
 
       if (!session) {
         window.location.href = "/dashboard-carro/index.html";
         return;
       }
 
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await supabaseClient.auth.getUser();
       currentUser = user;
 
       document.getElementById("userEmail").textContent =
         "Logado como: " + user.email;
+
+      document.getElementById("saveBtn").addEventListener("click", addCar);
+      document.getElementById("logoutBtn").addEventListener("click", logout);
 
       loadCars();
     });
 
     async function loadCars() {
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseClient
         .from("cars")
         .select("*")
         .order("created_at", { ascending: false });
@@ -87,7 +91,7 @@
         return;
       }
 
-      const { error } = await supabase.from("cars").insert([
+      const { error } = await supabaseClient.from("cars").insert([
         {
           user_id: currentUser.id,
           brand,
@@ -110,7 +114,7 @@
     }
 
     async function logout() {
-      await supabase.auth.signOut();
+      await supabaseClient.auth.signOut();
       window.location.href = "/dashboard-carro/index.html";
     }
   </script>
