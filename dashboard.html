@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Car Dashboard</title>
+  <meta charset="UTF-8" />
+  <title>Meus Carros</title>
 </head>
 
 <body>
@@ -12,112 +11,24 @@
   <div id="userEmail"></div>
 
   <h3>Novo Carro</h3>
-  <input type="text" id="brand" placeholder="Marca">
-  <input type="text" id="model" placeholder="Modelo">
-  <input type="text" id="plate" placeholder="Placa">
-  <button id="saveBtn">Salvar</button>
+
+  <input type="text" id="marca" placeholder="Marca">
+  <input type="text" id="modelo" placeholder="Modelo">
+  <input type="text" id="placa" placeholder="Placa">
+  <button onclick="addCar()">Salvar</button>
 
   <h3>Lista de Carros</h3>
-  <ul id="carList"></ul>
+  <div id="carList"></div>
 
-  <button id="logoutBtn">Sair</button>
+  <br>
+  <button onclick="logout()">Sair</button>
 
-  <!-- Carrega biblioteca Supabase -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script>
-    const SUPABASE_URL = "https://fzcliwxwzkwomvfeevds.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6Y2xpd3h3emt3b212ZmVldmRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgxNTcwMzEsImV4cCI6MjA4MzczMzAzMX0.filx-dFt2vVF42PPcVUTNgE_n2gW9Y1vChvHsf75Xn0";
-
-    const supabaseClient = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
-
-    let currentUser = null;
-
-    document.addEventListener("DOMContentLoaded", async function () {
-
-      const { data: { session } } = await supabaseClient.auth.getSession();
-
-      if (!session) {
-        window.location.href = "/dashboard-carro/index.html";
-        return;
-      }
-
-      const { data: { user } } = await supabaseClient.auth.getUser();
-      currentUser = user;
-
-      document.getElementById("userEmail").textContent =
-        "Logado como: " + user.email;
-
-      document.getElementById("saveBtn").addEventListener("click", addCar);
-      document.getElementById("logoutBtn").addEventListener("click", logout);
-
-      loadCars();
-    });
-
-    async function loadCars() {
-
-      const { data, error } = await supabaseClient
-        .from("cars")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error(error);
-        alert("Erro ao carregar carros");
-        return;
-      }
-
-      const list = document.getElementById("carList");
-      list.innerHTML = "";
-
-      data.forEach(car => {
-        const li = document.createElement("li");
-        li.textContent = `${car.brand} ${car.model} - ${car.plate}`;
-        list.appendChild(li);
-      });
-    }
-
-    async function addCar() {
-
-      const brand = document.getElementById("brand").value;
-      const model = document.getElementById("model").value;
-      const plate = document.getElementById("plate").value;
-
-      if (!brand || !model || !plate) {
-        alert("Preencha todos os campos");
-        return;
-      }
-
-      const { error } = await supabaseClient.from("cars").insert([
-        {
-          user_id: currentUser.id,
-          brand,
-          model,
-          plate
-        }
-      ]);
-
-      if (error) {
-        console.error(error);
-        alert("Erro ao salvar");
-        return;
-      }
-
-      document.getElementById("brand").value = "";
-      document.getElementById("model").value = "";
-      document.getElementById("plate").value = "";
-
-      loadCars();
-    }
-
-    async function logout() {
-      await supabaseClient.auth.signOut();
-      window.location.href = "/dashboard-carro/index.html";
-    }
-  </script>
+  <!-- Seus scripts -->
+  <script src="js/supabase.js"></script>
+  <script src="js/dashboard.js"></script>
 
 </body>
 </html>
