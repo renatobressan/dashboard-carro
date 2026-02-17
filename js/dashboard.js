@@ -11,6 +11,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 });
 
+
 async function loadDashboard(userId) {
 
   const { data, error } = await window.sb
@@ -20,7 +21,7 @@ async function loadDashboard(userId) {
     .ilike("Tipo", "%abastecimento%");
 
   if (error) {
-    console.error(error);
+    console.error("Erro ao buscar dados:", error);
     alert("Erro ao carregar dados.");
     return;
   }
@@ -30,13 +31,13 @@ async function loadDashboard(userId) {
     return;
   }
 
-  // Converter data texto para Date real
+  // Converter data texto dd/mm/yyyy para Date real
   data.forEach(row => {
     const [dia, mes, ano] = row["Data"].split("/");
     row._dataReal = new Date(`${ano}-${mes}-${dia}`);
   });
 
-  // Ordenar por data
+  // Ordenar por data mais recente
   data.sort((a, b) => b._dataReal - a._dataReal);
 
   const ultimo = data[0];
@@ -50,7 +51,8 @@ async function loadDashboard(userId) {
   const distancia = kmAtual - kmAnterior;
   const consumo = distancia / litros;
 
-  // Média últimas 20
+  // ===== MÉDIA ÚLTIMAS 20 =====
+
   const ultimos20 = data.slice(0, 20);
 
   let soma = 0;
@@ -65,7 +67,7 @@ async function loadDashboard(userId) {
     const distTemp = km1 - km2;
     const consTemp = distTemp / litrosTemp;
 
-    if (!isNaN(consTemp)) {
+    if (!isNaN(consTemp) && isFinite(consTemp)) {
       soma += consTemp;
       contador++;
     }
@@ -73,7 +75,8 @@ async function loadDashboard(userId) {
 
   const media = contador > 0 ? soma / contador : 0;
 
-  // Atualizar cards
+  // ===== ATUALIZAR CARDS =====
+
   document.getElementById("cardData").innerText = ultimo["Data"];
   document.getElementById("cardValor").innerText = `R$ ${valor.toFixed(2)}`;
   document.getElementById("cardKm").innerText = kmAtual.toLocaleString();
@@ -84,6 +87,8 @@ async function loadDashboard(userId) {
   renderHistorico(data);
 
 }
+
+
 
 function renderChart(dados) {
 
@@ -110,7 +115,11 @@ function renderChart(dados) {
 
   const ctx = document.getElementById("consumoChart");
 
-  new Chart(ctx, {
+  if (window.consumoChartInstance) {
+    window.consumoChartInstance.destroy();
+  }
+
+  window.consumoChartInstance = new Chart(ctx, {
     type: "line",
     data: {
       labels: labels,
@@ -125,6 +134,7 @@ function renderChart(dados) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: {
           labels: { color: "#fff" }
@@ -142,7 +152,10 @@ function renderChart(dados) {
       }
     }
   });
+
 }
+
+
 
 function renderHistorico(data) {
 
@@ -166,13 +179,15 @@ function renderHistorico(data) {
 
     div.innerHTML = `
       <div>${row["Data"]}</div>
-      <div>${row["Item"]}</div>
-      <div>${row["Local"]}</div>
+      <div>${row["Item"] || "-"}</div>
+      <div>${row["Local"] || "-"}</div>
       <div>${Number(row["Odômetro (KM)"]).toLocaleString()}</div>
       <div>${row["Quantidade"]}</div>
       <div>R$ ${Number(row["Valor Total"]).toFixed(2)}</div>
     `;
 
     container.appendChild(div);
+
   });
+
 }
