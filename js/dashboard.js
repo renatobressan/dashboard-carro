@@ -1,64 +1,116 @@
 document.addEventListener("DOMContentLoaded", async () => {
 
-const { data: { user } } = await window.sb.auth.getUser();
+  const { data: { user } } = await window.sb.auth.getUser();
 
-if (!user) {
-window.location.href = "index.html";
-return;
-}
+  if (!user) {
+    window.location.href = "index.html";
+    return;
+  }
 
-loadCars();
+  loadDashboard();
+
 });
 
-async function addCar() {
+async function loadDashboard() {
 
-const marca = document.getElementById("marca").value;
-const modelo = document.getElementById("modelo").value;
-const placa = document.getElementById("placa").value;
+  const { data, error } = await window.sb
+    .from("Base_Hist")
+    .select("*")
+    .ilike("Tipo", "%abastecimento%");
 
-const { data: { user } } = await window.sb.auth.getUser();
+  if (error) {
+    console.error("Erro ao buscar Base_Hist:", error);
+    alert("Erro ao carregar dados.");
+    return;
+  }
 
-const { error } = await window.sb.from("cars").insert([{
-marca,
-modelo,
-placa,
-user_id: user.id
-}]);
+  if (!data || data.length < 2) {
+    console.warn("Dados insuficientes para cálculo.");
+    return;
+  }
 
-if (error) {
-alert(error.message);
-return;
-}
+  // Converter Data (texto dd/mm/yyyy) para objeto Date real
+  data.forEach(row => {
+    const [dia, mes, ano] = row["Data"].split("/");
+    row._dataReal = new Date(`${ano}-${mes}-${dia}`);
+  });
 
-loadCars();
-}
+  // Ordenar corretamente pela data
+  data.sort((a, b) => b._dataReal - a._dataReal);
 
-async function loadCars() {
+  const ultimo = data[0];
+  const anterior = data[1];
 
-const { data: { user } } = await window.sb.auth.getUser();
+  const kmAtual = Number(ultimo["Odômetro (KM)"]);
+  const kmAnterior = Number(anterior["Odômetro (KM)"]);
+  const litros = Number(ultimo["Quantidade"]);
+  const valor = Number(ultimo["Valor Total"]);
 
-const { data, error } = await window.sb
-.from("cars")
-.select("*")
-.eq("user_id", user.id)
-.order("id", { ascending: false });
+  const distancia = kmAtual - kmAnterior;
+  const consumo = distancia / litros;
 
-if (error) {
-alert(error.message);
-return;
-}
+  // ===== MÉDIA ÚLTIMAS 20 =====
 
-const list = document.getElementById("carList");
-list.innerHTML = "";
+  const ultimos20 = data.slice(0, 20);
+  let somaConsumo = 0;
+  let contador = 0;
 
-data.forEach(car => {
-const div = document.createElement("div");
-div.innerHTML = `<strong>${car.marca}</strong> - ${car.modelo} (${car.placa})`;
-list.appendChild(div);
-});
-}
+  for (let i = 0; i < ultimos20.length - 1; i++) {
 
-async function logout() {
-await window.sb.auth.signOut();
-window.location.href = "index.html";
+    const km1 = Number(ultimos20[i]["Odômetro (KM)"]);
+    const km2 = Number(ultimos20[i + 1]["Odômetro (KM)"]);
+    const litrosTemp = Number(ultimos20[i]["Quantidade"]);
+
+    const distTemp = km1 - km2;
+    const consTemp = distTemp / litrosTemp;
+
+    if (!isNaN(consTemp) && isFinite(consTemp)) {
+      somaConsumo += consTemp;
+      contador++;
+    }
+
+  }
+
+  const media = contador > 0 ? somaConsumo / contador : 0;
+
+  // ===== ATUALIZAR CARDS =====
+
+  const elData = document.getElementById("cardData");
+  const elValor = document.getElementById("cardValor");
+  const elKm = document.getElementById("cardKm");
+  const elConsumo = document.getElementById("cardConsumo");
+  const elMedia = document.getElementById("cardMedia");
+  const elContainer = document.getElementById("baseHistContainer");
+
+  if (!elData || !elValor || !elKm || !elConsumo || !elMedia || !elContainer) {
+    console.error("Algum ID do dashboard não foi encontrado no HTML.");
+    return;
+  }
+
+  elData.innerText = ultimo["Data"];
+  elValor.innerText = `R$ ${valor.toFixed(2)}`;
+  elKm.innerText = kmAtual.toLocaleString();
+  elConsumo.innerText = consumo.toFixed(2) + " km/L";
+  elMedia.innerText = "média: " + media.toFixed(2) + " km/L";
+
+  // ===== BASE HIST =====
+
+  elContainer.innerHTML = "";
+
+  data.forEach(row => {
+
+    const div = document.createElement("div");
+    div.classList.add("hist-row");
+
+    div.innerHTML = `
+      <strong>${row["Data"]}</strong> |
+      KM: ${Number(row["Odômetro (KM)"]).toLocaleString()} |
+      Litros: ${row["Quantidade"]} |
+      Total: R$ ${Number(row["Valor Total"]).toFixed(2)}
+    `;
+
+    elContainer.appendChild(div);
+
+  });
+
 }
