@@ -21,7 +21,7 @@ if (!window.supabase) {
 
 if (!window.supabaseClient) {
 
-  const SUPABASE_URL = "https://fzclivwxzwkomvfeevds.supabase.co";
+  const SUPABASE_URL = "https://fzcliwxwzkwomvfeevds.supabase.co";
   const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ6Y2xpd3h3emt3b212ZmVldmRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjgxNTcwMzEsImV4cCI6MjA4MzczMzAzMX0.filx-dFt2vVF42PPcVUTNgE_n2gW9Y1vChvHsf75Xn0";
 
   window.supabaseClient = window.supabase.createClient(
