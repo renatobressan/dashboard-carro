@@ -16,46 +16,50 @@
   <div class="cards-grid">
 
     <div class="card">
-      <h3>Última Data de Abastecimento</h3>
-      <p id="cardData">--</p>
-      <span>Local do último Abastecimento</span>
+      <span>Última Data</span>
+      <h2 id="cardData">--</h2>
+      <small>Local do último abastecimento</small>
     </div>
 
     <div class="card">
-      <h3>Valor Pago (Último Abastecimento)</h3>
-      <p id="cardValor">R$ --</p>
-      <span>Valor Pago – Litros abastecidos</span>
+      <span>Valor Pago</span>
+      <h2 id="cardValor">R$ --</h2>
+      <small>Litros abastecidos</small>
     </div>
 
     <div class="card">
-      <h3>Odômetro (KM) no Abastecimento</h3>
-      <p id="cardKm">--</p>
-      <span>Distância desde o Anterior</span>
+      <span>Odômetro</span>
+      <h2 id="cardKm">--</h2>
+      <small>Distância desde anterior</small>
     </div>
 
     <div class="card">
-      <h3>Consumo (Km/L)</h3>
-      <p id="cardConsumo">-- km/L</p>
-      <span id="cardMedia">média: -- km/L</span>
+      <span>Consumo</span>
+      <h2 id="cardConsumo">-- km/L</h2>
+      <small id="cardMedia">média: -- km/L</small>
     </div>
 
   </div>
 
-  <!-- GRÁFICO -->
-  <div class="chart-card">
-    <h2>Consumo (KM/L) – últimas 20 datas</h2>
-    <canvas id="consumoChart"></canvas>
-  </div>
+  <!-- BLOCO INFERIOR -->
+  <div class="bottom-grid">
 
-  <!-- HISTÓRICO -->
-  <div class="hist-card">
-    <h2>Histórico de Abastecimento</h2>
-    <div id="baseHistContainer"></div>
+    <!-- GRÁFICO -->
+    <div class="chart-card">
+      <h3>Consumo – Últimas 20 Datas</h3>
+      <canvas id="consumoChart"></canvas>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div class="hist-card">
+      <h3>Histórico de Abastecimento</h3>
+      <div id="baseHistContainer"></div>
+    </div>
+
   </div>
 
 </div>
 
-<!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="./js/supabase.js"></script>
