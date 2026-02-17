@@ -2,7 +2,9 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard – Car Dashboard</title>
+
   <link rel="stylesheet" href="./css/dashboard.css">
 </head>
 
@@ -10,55 +12,69 @@
 
 <div class="dashboard-wrapper">
 
-  <h1>Dashboard – Abastecimento & Manutenção</h1>
+  <h1 class="dashboard-title">
+    Dashboard – Abastecimento & Manutenção
+  </h1>
 
-  <!-- CARDS -->
-  <div class="cards-grid">
+  <!-- ===== CARDS SUPERIORES ===== -->
+  <div class="cards-container">
 
     <div class="card">
-      <span>Última Data</span>
-      <h2 id="cardData">--</h2>
-      <small>Local do último abastecimento</small>
+      <div class="card-label">Última Data de Abastecimento</div>
+      <div class="card-value" id="cardData">--</div>
+      <div class="card-footer">Local do último abastecimento</div>
     </div>
 
     <div class="card">
-      <span>Valor Pago</span>
-      <h2 id="cardValor">R$ --</h2>
-      <small>Litros abastecidos</small>
+      <div class="card-label">Valor Pago</div>
+      <div class="card-value" id="cardValor">R$ --</div>
+      <div class="card-footer">Valor pago – litros abastecidos</div>
     </div>
 
     <div class="card">
-      <span>Odômetro</span>
-      <h2 id="cardKm">--</h2>
-      <small>Distância desde anterior</small>
+      <div class="card-label">Odômetro (KM)</div>
+      <div class="card-value" id="cardKm">--</div>
+      <div class="card-footer">Distância desde o anterior</div>
     </div>
 
     <div class="card">
-      <span>Consumo</span>
-      <h2 id="cardConsumo">-- km/L</h2>
-      <small id="cardMedia">média: -- km/L</small>
+      <div class="card-label">Consumo (km/L)</div>
+      <div class="card-value" id="cardConsumo">-- km/L</div>
+      <div class="card-footer" id="cardMedia">média: -- km/L</div>
     </div>
 
   </div>
 
-  <!-- BLOCO INFERIOR -->
-  <div class="bottom-grid">
+  <!-- ===== BLOCO INFERIOR ===== -->
+  <div class="bottom-section">
 
     <!-- GRÁFICO -->
-    <div class="chart-card">
-      <h3>Consumo – Últimas 20 Datas</h3>
-      <canvas id="consumoChart"></canvas>
+    <div class="section-card">
+      <div class="section-title">
+        Consumo (KM/L) – últimas 20 datas
+      </div>
+
+      <div class="chart-body">
+        <canvas id="consumoChart"></canvas>
+      </div>
     </div>
 
     <!-- HISTÓRICO -->
-    <div class="hist-card">
-      <h3>Histórico de Abastecimento</h3>
-      <div id="baseHistContainer"></div>
+    <div class="section-card">
+      <div class="section-title">
+        Histórico de Abastecimento
+      </div>
+
+      <div id="baseHistContainer" class="base-hist-container">
+        <!-- preenchido via JS -->
+      </div>
     </div>
 
   </div>
 
 </div>
+
+<!-- ===== SCRIPTS ===== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
