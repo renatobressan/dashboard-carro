@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Login - Car Dashboard</title>
-  <link rel="stylesheet" href="css/login.css">
+  <link rel="stylesheet" href="./css/login.css">
 </head>
 
 <body>
@@ -12,7 +12,6 @@
     <h2>🚗 Car Dashboard</h2>
 
     <form id="loginForm">
-
       <label>Email</label>
       <input type="email" id="email" required>
 
@@ -20,18 +19,15 @@
       <input type="password" id="password" required>
 
       <button type="submit">Entrar</button>
-
     </form>
   </div>
 
-  <!-- 1️⃣ SUPABASE CDN -->
+  <!-- SUPABASE CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <!-- 2️⃣ CONFIG -->
-  <script src="js/supabase.js"></script>
-
-  <!-- 3️⃣ LOGIN -->
-  <script src="js/login.js"></script>
+  <!-- IMPORTANTE: caminho correto -->
+  <script src="./js/supabase.js"></script>
+  <script src="./js/login.js"></script>
 
 </body>
 </html>
