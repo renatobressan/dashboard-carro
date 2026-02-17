@@ -13,7 +13,6 @@
   <div class="app-container">
     <div class="login-card">
       <h1>🚗 Car Dashboard</h1>
-      <p>Faça login para continuar</p>
 
       <form id="loginForm">
         <div class="input-group">
@@ -27,13 +26,12 @@
         </div>
 
         <button type="submit" class="btn-login">Entrar</button>
-
         <div class="error-msg" id="errorMsg"></div>
       </form>
     </div>
   </div>
 
-  <!-- SUPABASE -->
+  <!-- IMPORTANTE: só carregar uma vez -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/dashboard-carro/js/supabase.js"></script>
   <script src="/dashboard-carro/js/login.js"></script>
