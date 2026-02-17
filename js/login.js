@@ -1,57 +1,32 @@
-// ===============================
-// LOGIN COM SUPABASE (ROBUSTO)
-// ===============================
+document.addEventListener("DOMContentLoaded", function () {
 
-document.addEventListener("DOMContentLoaded", () => {
-  // Verificações básicas
-  if (!window.sb) {
-    console.error("Supabase não carregado (window.sb inexistente)");
-    return;
-  }
+  const form = document.getElementById("loginForm");
+  const errorMsg = document.getElementById("errorMsg");
 
-  const btnLogin = document.getElementById("btnLogin");
-  const emailInput = document.getElementById("email");
-  const senhaInput = document.getElementById("senha");
-  const erroBox = document.getElementById("loginErro");
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-  if (!btnLogin || !emailInput || !senhaInput || !erroBox) {
-    console.error("Elementos de login não encontrados no HTML", {
-      btnLogin,
-      emailInput,
-      senhaInput,
-      erroBox
-    });
-    return;
-  }
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
 
-  btnLogin.addEventListener("click", async () => {
-    erroBox.innerText = "";
+    // Limpa erro anterior
+    errorMsg.style.display = "none";
 
-    const email = emailInput.value.trim();
-    const senha = senhaInput.value.trim();
+    // Simulação de login (trocar depois por Supabase)
+    if (email === "admin@carro.com" && password === "123456") {
 
-    if (!email || !senha) {
-      erroBox.innerText = "Informe e-mail e senha.";
-      return;
-    }
+      // Salva sessão simples
+      localStorage.setItem("loggedIn", "true");
 
-    try {
-      const { data, error } = await window.sb.auth.signInWithPassword({
-        email,
-        password: senha
-      });
-
-      if (error) {
-        erroBox.innerText = error.message;
-        return;
-      }
-
-      console.log("Login realizado:", data.user.email);
+      // Redireciona
       window.location.href = "dashboard.html";
 
-    } catch (e) {
-      console.error("Erro inesperado no login:", e);
-      erroBox.innerText = "Erro inesperado no login.";
+    } else {
+
+      errorMsg.textContent = "Email ou senha inválidos";
+      errorMsg.style.display = "block";
+
     }
   });
+
 });
