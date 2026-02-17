@@ -14,7 +14,11 @@
 
 //console.log("Supabase conectado:", window.sb);
 
-// Evita recriar se já existir
+// Cria cliente apenas se ainda não existir
+if (!window.supabase) {
+  console.error("Biblioteca Supabase não carregou.");
+}
+
 if (!window.supabaseClient) {
 
   const SUPABASE_URL = "https://fzclivwxzwkomvfeevds.supabase.co";
@@ -25,7 +29,4 @@ if (!window.supabaseClient) {
     SUPABASE_ANON_KEY
   );
 }
-
-// Usa sempre a mesma instância
-const supabase = window.supabaseClient;
 
