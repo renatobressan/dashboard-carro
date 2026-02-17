@@ -143,20 +143,81 @@ body {
 
 /* ===== HISTÓRICO ===== */
 
-.base-hist-container {
+/* .base-hist-container {
   max-height: 380px;
   overflow-y: auto;
   overflow-x: auto;
-}
+} */
 
 /* Tabela estilo grid fixo */
-.hist-header,
+/* .hist-header,
 .hist-row {
   display: grid;
   grid-template-columns: 100px 120px 140px 120px 100px 120px;
   padding: 12px 10px;
   font-size: 13px;
   align-items: center;
+} */
+
+/* Header */
+/* .hist-header {
+  position: sticky;
+  top: 0;
+  background: #1e293b;
+  font-weight: 600;
+  color: #38bdf8;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  z-index: 2;
+} */
+
+/* Linhas */
+/* .hist-row {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: #cbd5e1;
+  transition: background 0.2s ease;
+}
+
+.hist-row:hover {
+  background: rgba(255,255,255,0.04);
+} */
+
+/* Alinhamento numérico */
+/* .hist-row div:nth-child(4),
+.hist-row div:nth-child(5),
+.hist-row div:nth-child(6) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+} */
+
+
+
+/* ===== SCROLL BONITO ===== */
+/* .base-hist-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.base-hist-container::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+} */
+
+/* ===== HISTÓRICO ===== */
+
+.base-hist-container {
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Grid fixo elegante */
+.hist-header,
+.hist-row {
+  display: grid;
+  grid-template-columns: 100px 120px 1fr 120px 80px 120px;
+  align-items: center;
+  padding: 14px 10px;
+  font-size: 14px;
+  text-align: center;
 }
 
 /* Header */
@@ -181,7 +242,7 @@ body {
   background: rgba(255,255,255,0.04);
 }
 
-/* Alinhamento numérico */
+/* Alinhamento numérico à direita */
 .hist-row div:nth-child(4),
 .hist-row div:nth-child(5),
 .hist-row div:nth-child(6) {
@@ -189,9 +250,7 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* FIM DO HISTORICO  */
-
-/* ===== SCROLL BONITO ===== */
+/* Scroll bonito */
 .base-hist-container::-webkit-scrollbar {
   width: 6px;
 }
@@ -201,6 +260,8 @@ body {
   border-radius: 10px;
 }
 
+
+/* FIM DO HISTORICO  */
 /* ===== RESPONSIVO ===== */
 @media (max-width: 1000px) {
   .bottom-section {
