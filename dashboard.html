@@ -1,34 +1,39 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8" />
-  <title>Meus Carros</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Car Dashboard</title>
+<link rel="stylesheet" href="./css/dashboard.css">
 </head>
 
 <body>
 
-  <h2>🚗 Meus Carros</h2>
-  <div id="userEmail"></div>
+<div class="dashboard-container">
 
-  <h3>Novo Carro</h3>
+<header>
+<h1>🚗 Meus Carros</h1>
+<button onclick="logout()">Sair</button>
+</header>
 
-  <input type="text" id="marca" placeholder="Marca">
-  <input type="text" id="modelo" placeholder="Modelo">
-  <input type="text" id="placa" placeholder="Placa">
-  <button onclick="addCar()">Salvar</button>
+<section>
+<h2>Novo Carro</h2>
+<input type="text" id="marca" placeholder="Marca">
+<input type="text" id="modelo" placeholder="Modelo">
+<input type="text" id="placa" placeholder="Placa">
+<button onclick="addCar()">Salvar</button>
+</section>
 
-  <h3>Lista de Carros</h3>
-  <div id="carList"></div>
+<section>
+<h2>Lista de Carros</h2>
+<div id="carList"></div>
+</section>
 
-  <br>
-  <button onclick="logout()">Sair</button>
+</div>
 
-  <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- Seus scripts -->
-  <script src="js/supabase.js"></script>
-  <script src="js/dashboard.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./js/supabase.js"></script>
+<script src="./js/dashboard.js"></script>
 
 </body>
 </html>
