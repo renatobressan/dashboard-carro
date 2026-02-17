@@ -71,12 +71,31 @@ body {
 }
 
 /* ===== BLOCO INFERIOR (GRÁFICO + HISTÓRICO) ===== */
-.bottom-section {
+/* .bottom-section {
   display: grid;
   grid-template-columns: 1.3fr 1fr;
   gap: 30px;
   margin-bottom: 40px;
+} */
+
+/* ===== BLOCO INFERIOR (GRÁFICO + HISTÓRICO) ===== */
+
+.bottom-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-bottom: 40px;
+  align-items: start;
 }
+
+/* Responsivo */
+@media (max-width: 1100px) {
+  .bottom-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+
 
 /* ===== CONTAINER PADRÃO ===== */
 .section-card {
