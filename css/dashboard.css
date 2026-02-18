@@ -39,7 +39,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 170px;
+  min-height: 190px;
 }
 
 .card-label {
@@ -57,8 +57,10 @@ body {
 .card-footer {
   font-size: 13px;
   color: #38bdf8;
-  margin-top: 14px;
-  min-height: 18px;   /* 👈 garante alinhamento */
+  margin-top: 16px;
+  height: 20px; /* 👈 força todos ficarem alinhados */
+  display: flex;
+  align-items: center;
 }
 
 /* ===== SECTION ===== */
