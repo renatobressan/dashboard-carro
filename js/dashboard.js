@@ -26,12 +26,13 @@ async function loadDashboard(userId) {
 
   if (!data || data.length < 2) return;
 
-  // Converter data
+  // Converter datas
   data.forEach(row => {
     const [dia, mes, ano] = row["Data"].split("/");
     row._dataReal = new Date(`${ano}-${mes}-${dia}`);
   });
 
+  // Ordenar do mais recente para o mais antigo
   data.sort((a,b)=> b._dataReal - a._dataReal);
 
   const ultimo = data[0];
@@ -41,10 +42,10 @@ async function loadDashboard(userId) {
   const kmAnterior = Number(anterior["Odômetro (KM)"]);
   const litros = Number(ultimo["Quantidade"]);
   const valorTotal = Number(ultimo["Valor Total"]);
-  const valorLitro = valorTotal / litros;
 
-  const distancia = kmAtual - kmAnterior;
-  const consumo = distancia / litros;
+  const distancia = kmAtual - kmAnterior;        // ✅ CORRETO
+  const consumo = distancia / litros;            // ✅ CORRETO
+  const valorLitro = valorTotal / litros;        // ✅ CORRETO
 
   // ===== CARDS =====
 
@@ -55,13 +56,13 @@ async function loadDashboard(userId) {
     `R$ ${valorTotal.toFixed(2)}`;
 
   document.getElementById("cardValorFooter").innerText =
-    `${litros.toFixed(2)} L • R$ ${valorLitro.toFixed(2)}/L`;
+    `R$ ${valorLitro.toFixed(2)} – ${litros.toFixed(2)} L`;
 
   document.getElementById("cardKm").innerText =
     kmAtual.toLocaleString();
 
   document.getElementById("cardKmFooter").innerText =
-    `+${distancia.toLocaleString()} KM desde o último`;
+    `Distância desde o anterior: ${distancia.toLocaleString()} KM`;
 
   document.getElementById("cardConsumo").innerText =
     consumo.toFixed(2);
@@ -69,7 +70,6 @@ async function loadDashboard(userId) {
   // ===== GRÁFICO =====
 
   const ultimos20 = data.slice(0,20);
-
   const labels = [];
   const consumoData = [];
 
@@ -103,39 +103,6 @@ async function loadDashboard(userId) {
         y: { ticks: { color: "#cbd5e1" } }
       }
     }
-  });
-
-  // ===== HISTÓRICO =====
-
-  const container = document.getElementById("baseHistContainer");
-  container.innerHTML = "";
-
-  const header = document.createElement("div");
-  header.classList.add("hist-header");
-  header.innerHTML = `
-    <div>Data</div>
-    <div>Item</div>
-    <div>Local</div>
-    <div>KM</div>
-    <div>Qtd</div>
-    <div>Total</div>
-  `;
-  container.appendChild(header);
-
-  data.forEach(row => {
-    const div = document.createElement("div");
-    div.classList.add("hist-row");
-
-    div.innerHTML = `
-      <div>${row["Data"]}</div>
-      <div>${row["Item"]}</div>
-      <div>${row["Local"]}</div>
-      <div>${Number(row["Odômetro (KM)"]).toLocaleString()}</div>
-      <div>${row["Quantidade"]}</div>
-      <div>R$ ${Number(row["Valor Total"]).toFixed(2)}</div>
-    `;
-
-    container.appendChild(div);
   });
 
 }
