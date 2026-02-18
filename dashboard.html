@@ -16,13 +16,13 @@
     Dashboard – Abastecimento & Manutenção
   </h1>
 
-  <!-- ===== CARDS ===== -->
+  <!-- ===== CARDS SUPERIORES ===== -->
   <div class="cards-container">
 
     <div class="card">
       <div class="card-label">Última Data de Abastecimento</div>
       <div class="card-value" id="cardData">--</div>
-      <div class="card-footer">Local do último abastecimento</div>
+      <div class="card-footer" id="cardLocal">--</div>
     </div>
 
     <div class="card">
@@ -45,8 +45,8 @@
 
   </div>
 
-  <!-- ===== GRÁFICO (FULL WIDTH) ===== -->
-  <div class="section-card full-width">
+  <!-- ===== GRÁFICO ===== -->
+  <div class="section-card">
     <div class="section-title">
       Consumo (KM/L) – últimas 20 datas
     </div>
@@ -57,17 +57,18 @@
   </div>
 
   <!-- ===== HISTÓRICO ===== -->
-  <div class="section-card full-width">
+  <div class="section-card" style="margin-top: 30px;">
     <div class="section-title">
       Histórico de Abastecimento
     </div>
 
-    <div id="baseHistContainer" class="base-hist-container"></div>
+    <div id="baseHistContainer" class="base-hist-container">
+      <!-- preenchido via JS -->
+    </div>
   </div>
 
 </div>
 
-<!-- ===== SCRIPTS ===== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="./js/supabase.js"></script>
