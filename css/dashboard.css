@@ -11,7 +11,7 @@ body {
   background: linear-gradient(135deg, #0f172a, #0b1120);
   color: #f1f5f9;
   padding: 40px;
-  overflow-x: hidden;   /* 👈 ADICIONE ISSO */
+  overflow-x: hidden;
 }
 
 /* ===== WRAPPER ===== */
@@ -27,7 +27,7 @@ body {
   margin-bottom: 40px;
 }
 
-/* ===== CARDS GRID RESPONSIVO ===== */
+/* ===== CARDS ===== */
 .cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -35,7 +35,6 @@ body {
   margin-bottom: 40px;
 }
 
-/* ===== CARD ===== */
 .card {
   background: #1e293b;
   padding: 26px;
@@ -52,7 +51,6 @@ body {
   box-shadow: 0 18px 40px rgba(37, 99, 235, 0.25);
 }
 
-/* ===== CARD TEXTOS ===== */
 .card-label {
   font-size: 13px;
   color: #94a3b8;
@@ -71,42 +69,15 @@ body {
   margin-top: 12px;
 }
 
-/* ===== BLOCO INFERIOR (GRÁFICO + HISTÓRICO) ===== */
-/* .bottom-section {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr;
-  gap: 30px;
-  margin-bottom: 40px;
-} */
-
-/* ===== BLOCO INFERIOR (GRÁFICO + HISTÓRICO) ===== */
-
-.bottom-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 30px;
-  margin-bottom: 40px;
-  align-items: start;
-}
-
-/* Responsivo */
-@media (max-width: 1100px) {
-  .bottom-section {
-    grid-template-columns: 1fr;
-  }
-}
-
-
-
-/* ===== CONTAINER PADRÃO ===== */
+/* ===== SECTION CARD ===== */
 .section-card {
   background: #1e293b;
   padding: 28px;
   border-radius: 20px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  margin-bottom: 40px;
 }
 
-/* ===== TÍTULO SEÇÃO ===== */
 .section-title {
   font-size: 16px;
   font-weight: 600;
@@ -116,101 +87,16 @@ body {
 
 /* ===== GRÁFICO ===== */
 .chart-body {
-  height: 260px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
+  height: 340px;
+  position: relative;
 }
 
 /* ===== HISTÓRICO ===== */
-/* .base-hist-container {
-  max-height: 320px;
-  overflow-y: auto;
-}
-
-.hist-row {
-  padding: 14px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  font-size: 14px;
-  color: #cbd5e1;
-  transition: all 0.2s ease;
-}
-
-.hist-row:hover {
-  background: rgba(255,255,255,0.04);
-  padding-left: 10px;
-} */
-
-/* ===== HISTÓRICO ===== */
-
-/* .base-hist-container {
-  max-height: 380px;
-  overflow-y: auto;
-  overflow-x: auto;
-} */
-
-/* Tabela estilo grid fixo */
-/* .hist-header,
-.hist-row {
-  display: grid;
-  grid-template-columns: 100px 120px 140px 120px 100px 120px;
-  padding: 12px 10px;
-  font-size: 13px;
-  align-items: center;
-} */
-
-/* Header */
-/* .hist-header {
-  position: sticky;
-  top: 0;
-  background: #1e293b;
-  font-weight: 600;
-  color: #38bdf8;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
-  z-index: 2;
-} */
-
-/* Linhas */
-/* .hist-row {
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  color: #cbd5e1;
-  transition: background 0.2s ease;
-}
-
-.hist-row:hover {
-  background: rgba(255,255,255,0.04);
-} */
-
-/* Alinhamento numérico */
-/* .hist-row div:nth-child(4),
-.hist-row div:nth-child(5),
-.hist-row div:nth-child(6) {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-} */
-
-
-
-/* ===== SCROLL BONITO ===== */
-/* .base-hist-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-.base-hist-container::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-} */
-
-/* ===== HISTÓRICO ===== */
-
 .base-hist-container {
   max-height: 420px;
   overflow-y: auto;
-  overflow-x: hidden;
 }
 
-/* Grid fixo elegante */
 .hist-header,
 .hist-row {
   display: grid;
@@ -218,10 +104,8 @@ body {
   align-items: center;
   padding: 14px 10px;
   font-size: 14px;
-  text-align: center;
 }
 
-/* Header */
 .hist-header {
   position: sticky;
   top: 0;
@@ -232,7 +116,6 @@ body {
   z-index: 2;
 }
 
-/* Linhas */
 .hist-row {
   border-bottom: 1px solid rgba(255,255,255,0.05);
   color: #cbd5e1;
@@ -243,7 +126,7 @@ body {
   background: rgba(255,255,255,0.04);
 }
 
-/* Alinhamento numérico à direita */
+/* Números alinhados */
 .hist-row div:nth-child(4),
 .hist-row div:nth-child(5),
 .hist-row div:nth-child(6) {
@@ -251,25 +134,17 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Scroll bonito */
+/* Scroll elegante */
 .base-hist-container::-webkit-scrollbar {
   width: 6px;
 }
 
 .base-hist-container::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.15);
   border-radius: 10px;
 }
 
-
-/* FIM DO HISTORICO  */
 /* ===== RESPONSIVO ===== */
-@media (max-width: 1000px) {
-  .bottom-section {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 768px) {
   body {
     padding: 20px;
