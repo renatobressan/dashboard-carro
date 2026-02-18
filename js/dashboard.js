@@ -33,7 +33,7 @@ async function loadDashboard(userId) {
   }
 
   // ============================
-  // FUNÇÕES BLINDADAS DEFINITIVAS
+  // SAFE NUMBER DEFINITIVO (corrige 133,244)
   // ============================
 
   function safeNumber(value) {
@@ -49,10 +49,14 @@ async function loadDashboard(userId) {
       let v = value.trim();
       if (v === "") return 0;
 
-      if (v.includes(",") && v.includes(".")) {
+      // remove separador de milhar corretamente
+      if (/^\d{1,3}(\.\d{3})+,\d+$/.test(v)) {
         v = v.replace(/\./g, "").replace(",", ".");
       }
-      else if (v.includes(",")) {
+      else if (/^\d{1,3}(,\d{3})+(\.\d+)?$/.test(v)) {
+        v = v.replace(/,/g, "");
+      }
+      else if (v.includes(",") && !v.includes(".")) {
         v = v.replace(",", ".");
       }
 
@@ -77,7 +81,7 @@ async function loadDashboard(userId) {
   }
 
   // ============================
-  // NORMALIZAÇÃO + FILTRO DATA VÁLIDA
+  // NORMALIZAÇÃO
   // ============================
 
   data.forEach(row => {
@@ -87,7 +91,7 @@ async function loadDashboard(userId) {
   const dataValida = data.filter(r => r._dataReal instanceof Date);
 
   if (dataValida.length < 2) {
-    console.warn("Dados com datas inválidas.");
+    console.warn("Datas inválidas.");
     return;
   }
 
@@ -104,30 +108,26 @@ async function loadDashboard(userId) {
   const localUltimo = safeText(ultimo["Local"]);
 
   // ============================
-  // DISTÂNCIA BLINDADA
+  // DISTÂNCIA CORRIGIDA
   // ============================
 
   let distancia = 0;
 
   if (
-    isFinite(kmAtual) &&
-    isFinite(kmAnterior) &&
     kmAtual > kmAnterior &&
+    (kmAtual - kmAnterior) > 0 &&
     (kmAtual - kmAnterior) < 2000
   ) {
     distancia = kmAtual - kmAnterior;
   }
 
   // ============================
-  // CONSUMO BLINDADO
+  // CONSUMO CORRIGIDO
   // ============================
 
   let consumo = 0;
 
-  if (
-    litros > 0 &&
-    distancia > 0
-  ) {
+  if (litros > 0 && distancia > 0) {
     const calc = distancia / litros;
 
     if (isFinite(calc) && calc > 2 && calc < 40) {
@@ -141,7 +141,7 @@ async function loadDashboard(userId) {
       : (litros > 0 ? valorTotal / litros : 0);
 
   // ============================
-  // MÉDIA ÚLTIMOS 20
+  // MÉDIA
   // ============================
 
   const ultimos20 = dataValida.slice(0, 20);
@@ -161,9 +161,7 @@ async function loadDashboard(userId) {
         : 0;
 
     if (litrosTemp > 0 && distTemp > 0) {
-
       const consTemp = distTemp / litrosTemp;
-
       if (isFinite(consTemp) && consTemp > 2 && consTemp < 40) {
         soma += consTemp;
         contador++;
@@ -174,14 +172,11 @@ async function loadDashboard(userId) {
   const media = contador > 0 ? soma / contador : 0;
 
   // ============================
-  // ATUALIZAR CARDS
+  // CARDS
   // ============================
 
-  document.getElementById("cardData").innerText =
-    safeText(ultimo["Data"]);
-
-  document.getElementById("cardDataFooter").innerText =
-    localUltimo;
+  document.getElementById("cardData").innerText = safeText(ultimo["Data"]);
+  document.getElementById("cardDataFooter").innerText = localUltimo;
 
   document.getElementById("cardValor").innerText =
     `R$ ${valorTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
@@ -220,9 +215,7 @@ async function loadDashboard(userId) {
         : 0;
 
     if (litrosTemp > 0 && distTemp > 0) {
-
       const consTemp = distTemp / litrosTemp;
-
       if (isFinite(consTemp) && consTemp > 2 && consTemp < 40) {
         labels.push(safeText(ultimos20[i - 1]["Data"]));
         consumoArray.push(consTemp);
@@ -231,9 +224,8 @@ async function loadDashboard(userId) {
   }
 
   const canvas = document.getElementById("consumoChart");
-  if (!canvas || consumoArray.length === 0) {
-    console.warn("Sem dados válidos para gráfico.");
-  } else {
+
+  if (canvas && consumoArray.length > 0) {
 
     const ctx = canvas.getContext("2d");
 
@@ -246,7 +238,7 @@ async function loadDashboard(userId) {
     window.consumoChartInstance = new Chart(ctx, {
       type: "line",
       data: {
-        labels: labels,
+        labels,
         datasets: [
           {
             label: "Consumo (km/L)",
@@ -268,28 +260,13 @@ async function loadDashboard(userId) {
       },
       options: {
         responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            labels: { color: "#cbd5e1" }
-          }
-        },
-        scales: {
-          x: {
-            ticks: { color: "#94a3b8" },
-            grid: { color: "rgba(255,255,255,0.05)" }
-          },
-          y: {
-            ticks: { color: "#94a3b8" },
-            grid: { color: "rgba(255,255,255,0.05)" }
-          }
-        }
+        maintainAspectRatio: false
       }
     });
   }
 
   // ============================
-  // HISTÓRICO COMPLETO
+  // HISTÓRICO
   // ============================
 
   const container = document.getElementById("baseHistContainer");
