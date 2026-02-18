@@ -1,3 +1,6 @@
+/* ===============================
+   RESET
+================================ */
 * {
   margin: 0;
   padding: 0;
@@ -5,28 +8,39 @@
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
+/* ===============================
+   BODY
+================================ */
 body {
   background: linear-gradient(135deg, #0f172a, #0b1120);
   color: #f1f5f9;
   padding: 40px;
+  overflow-x: hidden;
 }
 
+/* ===============================
+   WRAPPER
+================================ */
 .dashboard-wrapper {
-  max-width: 1400px;
+  max-width: 1500px;
   margin: auto;
 }
 
+/* ===============================
+   TÍTULO
+================================ */
 .dashboard-title {
   font-size: 32px;
   font-weight: 700;
   margin-bottom: 40px;
 }
 
-/* ===== CARDS ===== */
-
+/* ===============================
+   CARDS SUPERIORES
+================================ */
 .cards-container {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 24px;
   margin-bottom: 40px;
 }
@@ -35,11 +49,17 @@ body {
   background: #1e293b;
   padding: 28px;
   border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
+  transition: all 0.25s ease;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 190px;
+  min-height: 160px;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 45px rgba(37, 99, 235, 0.25);
 }
 
 .card-label {
@@ -57,52 +77,142 @@ body {
 .card-footer {
   font-size: 13px;
   color: #38bdf8;
-  margin-top: 16px;
-  height: 20px; /* 👈 força todos ficarem alinhados */
+  margin-top: 14px;
+  min-height: 36px; /* mantém alinhamento dos 4 */
   display: flex;
-  align-items: center;
+  align-items: flex-start;
 }
 
-/* ===== SECTION ===== */
+/* ===============================
+   BLOCO INFERIOR
+================================ */
+.bottom-section {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-bottom: 40px;
+}
 
+/* ===============================
+   CONTAINER PADRÃO
+================================ */
 .section-card {
   background: #1e293b;
-  padding: 28px;
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.35);
+  padding: 30px;
+  border-radius: 22px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.35);
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: 17px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
+  color: #cbd5e1;
 }
 
+/* ===============================
+   GRÁFICO
+================================ */
 .chart-body {
-  height: 280px;
+  height: 320px;
+  position: relative;
 }
 
+/* ===============================
+   HISTÓRICO COMPLETO
+================================ */
 .base-hist-container {
-  max-height: 420px;
-  overflow-y: auto;
+  max-height: 520px;
+  overflow: auto;
+  font-size: 13px;
+  border-radius: 10px;
 }
 
+/* GRID COM TODAS COLUNAS */
 .hist-header,
 .hist-row {
   display: grid;
-  grid-template-columns: 100px 120px 1fr 120px 80px 120px;
-  padding: 12px;
-  font-size: 14px;
+  grid-template-columns:
+    100px   /* Data */
+    90px    /* Placa */
+    110px   /* Tipo */
+    130px   /* Item */
+    220px   /* Local */
+    110px   /* Odômetro */
+    110px   /* Valor Unit */
+    90px    /* Qtd */
+    110px   /* Total */
+    220px;  /* Anotações */
+
   align-items: center;
-  text-align: center;
+  padding: 14px 10px;
+  gap: 10px;
 }
 
+/* HEADER FIXO */
 .hist-header {
+  position: sticky;
+  top: 0;
+  background: #1e293b;
   font-weight: 600;
   color: #38bdf8;
   border-bottom: 1px solid rgba(255,255,255,0.1);
+  z-index: 2;
 }
 
+/* LINHAS */
 .hist-row {
   border-bottom: 1px solid rgba(255,255,255,0.05);
+  color: #cbd5e1;
+  transition: background 0.2s ease;
+}
+
+.hist-row:hover {
+  background: rgba(255,255,255,0.04);
+}
+
+/* ALINHAMENTO NUMÉRICO */
+.hist-row div:nth-child(6),
+.hist-row div:nth-child(7),
+.hist-row div:nth-child(8),
+.hist-row div:nth-child(9) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* SCROLL PERSONALIZADO */
+.base-hist-container::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.base-hist-container::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.12);
+  border-radius: 10px;
+}
+
+/* ===============================
+   RESPONSIVO
+================================ */
+@media (max-width: 1200px) {
+  .hist-header,
+  .hist-row {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  body {
+    padding: 20px;
+  }
+
+  .dashboard-title {
+    font-size: 24px;
+  }
+
+  .card-value {
+    font-size: 28px;
+  }
+
 }
