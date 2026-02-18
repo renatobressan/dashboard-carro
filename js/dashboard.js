@@ -33,19 +33,34 @@ async function loadDashboard(userId) {
   }
 
   // ============================
-  // FUNÇÕES BLINDADAS
+  // FUNÇÕES BLINDADAS DEFINITIVAS
   // ============================
 
   function safeNumber(value) {
+
     if (value === null || value === undefined) return 0;
-    if (typeof value === "number") return value;
+
+    if (typeof value === "number") {
+      return isFinite(value) ? value : 0;
+    }
 
     if (typeof value === "string") {
-      const cleaned = value
-        .replace(/\./g, "")
-        .replace(",", ".")
-        .replace(/[^\d.-]/g, "");
-      return Number(cleaned) || 0;
+
+      // remove espaços
+      let v = value.trim();
+
+      // se vier formato brasileiro 133.244,50
+      if (v.includes(",") && v.includes(".")) {
+        v = v.replace(/\./g, "").replace(",", ".");
+      }
+      // se vier só vírgula decimal
+      else if (v.includes(",")) {
+        v = v.replace(",", ".");
+      }
+
+      const num = Number(v);
+
+      return isFinite(num) ? num : 0;
     }
 
     return 0;
@@ -83,8 +98,14 @@ async function loadDashboard(userId) {
   const valorUnit = safeNumber(ultimo["Valor Unitário"]);
   const localUltimo = safeText(ultimo["Local"]);
 
-  // 🔥 CORREÇÃO MATEMÁTICA REAL
-  const distancia = kmAtual > kmAnterior ? kmAtual - kmAnterior : 0;
+  // ============================
+  // CORREÇÃO MATEMÁTICA REAL
+  // ============================
+
+  const distancia =
+    kmAtual > kmAnterior
+      ? kmAtual - kmAnterior
+      : 0;
 
   const consumo =
     litros > 0 && distancia > 0
@@ -111,12 +132,16 @@ async function loadDashboard(userId) {
     const km2 = safeNumber(ultimos20[i + 1]["Odômetro (KM)"]);
     const litrosTemp = safeNumber(ultimos20[i]["Quantidade"]);
 
-    const distTemp = km1 > km2 ? km1 - km2 : 0;
+    const distTemp =
+      km1 > km2
+        ? km1 - km2
+        : 0;
 
     if (litrosTemp > 0 && distTemp > 0) {
+
       const consTemp = distTemp / litrosTemp;
 
-      if (!isNaN(consTemp) && isFinite(consTemp) && consTemp > 0) {
+      if (isFinite(consTemp) && consTemp > 0) {
         soma += consTemp;
         contador++;
       }
@@ -148,13 +173,15 @@ async function loadDashboard(userId) {
     `Distância desde o anterior: ${distancia.toLocaleString("pt-BR")} KM`;
 
   document.getElementById("cardConsumo").innerText =
-    consumo > 0 ? consumo.toFixed(2) : "--";
+    consumo > 0
+      ? consumo.toFixed(2)
+      : "--";
 
   document.getElementById("cardConsumoFooter").innerText =
     "Cálculo: (KM Atual - KM Anterior) ÷ Litros";
 
   // ============================
-  // GRÁFICO (MANTIDO 100%)
+  // GRÁFICO — SEU MODELO ORIGINAL
   // ============================
 
   const labels = [];
@@ -166,12 +193,19 @@ async function loadDashboard(userId) {
     const km2 = safeNumber(ultimos20[i - 1]["Odômetro (KM)"]);
     const litrosTemp = safeNumber(ultimos20[i - 1]["Quantidade"]);
 
-    const distTemp = km2 > km1 ? km2 - km1 : 0;
+    const distTemp =
+      km2 > km1
+        ? km2 - km1
+        : 0;
 
     if (litrosTemp > 0 && distTemp > 0) {
+
       const consTemp = distTemp / litrosTemp;
-      labels.push(safeText(ultimos20[i - 1]["Data"]));
-      consumoArray.push(consTemp);
+
+      if (isFinite(consTemp) && consTemp > 0) {
+        labels.push(safeText(ultimos20[i - 1]["Data"]));
+        consumoArray.push(consTemp);
+      }
     }
   }
 
@@ -232,7 +266,6 @@ async function loadDashboard(userId) {
   // ============================
 
   const container = document.getElementById("baseHistContainer");
-
   container.innerHTML = "";
 
   data.forEach(row => {
