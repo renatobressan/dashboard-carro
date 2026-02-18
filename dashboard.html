@@ -16,7 +16,7 @@
     Dashboard – Abastecimento & Manutenção
   </h1>
 
-  <!-- ===== CARDS SUPERIORES ===== -->
+  <!-- ===== CARDS ===== -->
   <div class="cards-container">
 
     <div class="card">
@@ -45,36 +45,27 @@
 
   </div>
 
-  <!-- ===== BLOCO INFERIOR ===== -->
-  <div class="bottom-section">
-
-    <!-- GRÁFICO -->
-    <div class="section-card">
-      <div class="section-title">
-        Consumo (KM/L) – últimas 20 datas
-      </div>
-
-      <div class="chart-body">
-        <canvas id="consumoChart"></canvas>
-      </div>
+  <!-- ===== GRÁFICO FULL WIDTH ===== -->
+  <div class="section-card full-width">
+    <div class="section-title">
+      Consumo (KM/L) – últimas 20 datas
     </div>
 
-    <!-- HISTÓRICO -->
-    <div class="section-card">
-      <div class="section-title">
-        Histórico de Abastecimento
-      </div>
+    <div class="chart-body">
+      <canvas id="consumoChart"></canvas>
+    </div>
+  </div>
 
-      <div id="baseHistContainer" class="base-hist-container">
-        <!-- preenchido via JS -->
-      </div>
+  <!-- ===== HISTÓRICO FULL WIDTH ===== -->
+  <div class="section-card full-width">
+    <div class="section-title">
+      Histórico de Abastecimento
     </div>
 
+    <div id="baseHistContainer" class="base-hist-container"></div>
   </div>
 
 </div>
-
-<!-- ===== SCRIPTS ===== -->
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
