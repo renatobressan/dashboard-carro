@@ -30,27 +30,41 @@ async function loadDashboard(userId) {
   }
 
   // ================================
-  // ORDENAR POR ODÔMETRO DESC
+  // FUNÇÃO PARA LIMPAR KM
+  // ================================
+
+  function parseKm(valor) {
+    if (!valor) return 0;
+    return Number(valor.toString().replace(/\./g, "").replace(",", "."));
+  }
+
+  function parseNumber(valor) {
+    if (!valor) return 0;
+    return Number(valor.toString().replace(",", "."));
+  }
+
+  // ================================
+  // ORDENAR POR KM REAL DESC
   // ================================
 
   data.sort((a, b) =>
-    Number(b["Odômetro (KM)"]) - Number(a["Odômetro (KM)"])
+    parseKm(b["Odômetro (KM)"]) - parseKm(a["Odômetro (KM)"])
   );
 
-  const ultimo = data[0];     // maior KM
-  const anterior = data[1];   // segundo maior KM
+  const ultimo = data[0];
+  const anterior = data[1];
 
-  const kmAtual = Number(ultimo["Odômetro (KM)"]);
-  const kmAnterior = Number(anterior["Odômetro (KM)"]);
-  const litros = Number(ultimo["Quantidade"]);
-  const valorTotal = Number(ultimo["Valor Total"]);
+  const kmAtual = parseKm(ultimo["Odômetro (KM)"]);
+  const kmAnterior = parseKm(anterior["Odômetro (KM)"]);
+  const litros = parseNumber(ultimo["Quantidade"]);
+  const valorTotal = parseNumber(ultimo["Valor Total"]);
 
   // ================================
   // CÁLCULOS CORRETOS
   // ================================
 
-  const distancia = kmAtual - kmAnterior; // agora correto
-  const consumo = distancia / litros;     // agora correto
+  const distancia = kmAtual - kmAnterior;
+  const consumo = distancia / litros;
   const valorLitro = valorTotal / litros;
 
   // ================================
@@ -70,62 +84,12 @@ async function loadDashboard(userId) {
     `R$ ${valorLitro.toFixed(2)} – ${litros.toFixed(2)} L`;
 
   document.getElementById("cardKm").innerText =
-    kmAtual.toLocaleString();
+    kmAtual.toLocaleString("pt-BR");
 
   document.getElementById("cardKmFooter").innerText =
-    `Distância desde o anterior: ${distancia.toLocaleString()} KM`;
+    `Distância desde o anterior: ${distancia.toLocaleString("pt-BR")} KM`;
 
   document.getElementById("cardConsumo").innerText =
     consumo.toFixed(2);
-
-  // ================================
-  // GRÁFICO CONSUMO
-  // ================================
-
-  const ultimos20 = data.slice(0, 20);
-
-  const labels = [];
-  const consumoData = [];
-
-  for (let i = 0; i < ultimos20.length - 1; i++) {
-
-    const km1 = Number(ultimos20[i]["Odômetro (KM)"]);
-    const km2 = Number(ultimos20[i + 1]["Odômetro (KM)"]);
-    const litrosTemp = Number(ultimos20[i]["Quantidade"]);
-
-    const distTemp = km1 - km2;
-    const consTemp = distTemp / litrosTemp;
-
-    if (!isNaN(consTemp) && isFinite(consTemp)) {
-      labels.push(ultimos20[i]["Data"]);
-      consumoData.push(consTemp);
-    }
-  }
-
-  new Chart(document.getElementById("consumoChart"), {
-    type: "line",
-    data: {
-      labels: labels.reverse(),
-      datasets: [{
-        label: "Consumo (km/L)",
-        data: consumoData.reverse(),
-        borderColor: "#38bdf8",
-        backgroundColor: "rgba(56,189,248,0.1)",
-        tension: 0.3,
-        fill: true
-      }]
-    },
-    options: {
-      plugins: {
-        legend: {
-          labels: { color: "#fff" }
-        }
-      },
-      scales: {
-        x: { ticks: { color: "#cbd5e1" } },
-        y: { ticks: { color: "#cbd5e1" } }
-      }
-    }
-  });
 
 }
