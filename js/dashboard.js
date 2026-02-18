@@ -11,33 +11,32 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 });
 
-
 async function loadDashboard(userId) {
 
   const { data, error } = await window.sb
     .from("Base_Hist")
     .select("*")
-    .eq("user_id", userId)
-    .ilike("Tipo", "%abastecimento%");
+    .eq("Tipo", "Abastecimento")
+    .eq("user_id", userId);
 
   if (error) {
-    console.error("Erro ao buscar dados:", error);
+    console.error("Erro ao buscar Base_Hist:", error);
     alert("Erro ao carregar dados.");
     return;
   }
 
   if (!data || data.length < 2) {
-    console.warn("Dados insuficientes.");
+    console.warn("Dados insuficientes para cálculo.");
     return;
   }
 
-  // Converter data texto dd/mm/yyyy para Date real
+  // Converter data texto para Date real
   data.forEach(row => {
     const [dia, mes, ano] = row["Data"].split("/");
     row._dataReal = new Date(`${ano}-${mes}-${dia}`);
   });
 
-  // Ordenar por data mais recente
+  // Ordenar por data decrescente
   data.sort((a, b) => b._dataReal - a._dataReal);
 
   const ultimo = data[0];
@@ -52,14 +51,11 @@ async function loadDashboard(userId) {
   const consumo = distancia / litros;
 
   // ===== MÉDIA ÚLTIMAS 20 =====
-
   const ultimos20 = data.slice(0, 20);
-
-  let soma = 0;
+  let somaConsumo = 0;
   let contador = 0;
 
   for (let i = 0; i < ultimos20.length - 1; i++) {
-
     const km1 = Number(ultimos20[i]["Odômetro (KM)"]);
     const km2 = Number(ultimos20[i + 1]["Odômetro (KM)"]);
     const litrosTemp = Number(ultimos20[i]["Quantidade"]);
@@ -68,64 +64,42 @@ async function loadDashboard(userId) {
     const consTemp = distTemp / litrosTemp;
 
     if (!isNaN(consTemp) && isFinite(consTemp)) {
-      soma += consTemp;
+      somaConsumo += consTemp;
       contador++;
     }
   }
 
-  const media = contador > 0 ? soma / contador : 0;
+  const media = contador > 0 ? somaConsumo / contador : 0;
 
   // ===== ATUALIZAR CARDS =====
-
   document.getElementById("cardData").innerText = ultimo["Data"];
+  document.getElementById("cardLocal").innerText = ultimo["Local"];
   document.getElementById("cardValor").innerText = `R$ ${valor.toFixed(2)}`;
   document.getElementById("cardKm").innerText = kmAtual.toLocaleString();
   document.getElementById("cardConsumo").innerText = consumo.toFixed(2) + " km/L";
-  document.getElementById("cardMedia").innerText = "média: " + media.toFixed(2) + " km/L";
+  document.getElementById("cardMedia").innerText =
+    "média: " + media.toFixed(2) + " km/L";
 
-  renderChart(ultimos20);
-  renderHistorico(data);
+  // ===== GRÁFICO =====
+  const labels = ultimos20.map(r => r["Data"]).reverse();
+  const consumoData = [];
 
-}
-
-
-
-function renderChart(dados) {
-
-  const labels = [];
-  const valores = [];
-
-  for (let i = dados.length - 1; i > 0; i--) {
-
-    const atual = dados[i - 1];
-    const anterior = dados[i];
-
-    const km1 = Number(atual["Odômetro (KM)"]);
-    const km2 = Number(anterior["Odômetro (KM)"]);
-    const litros = Number(atual["Quantidade"]);
-
-    const distancia = km1 - km2;
-    const consumo = distancia / litros;
-
-    if (!isNaN(consumo)) {
-      labels.push(atual["Data"]);
-      valores.push(consumo.toFixed(2));
-    }
+  for (let i = ultimos20.length - 1; i > 0; i--) {
+    const km1 = Number(ultimos20[i - 1]["Odômetro (KM)"]);
+    const km2 = Number(ultimos20[i]["Odômetro (KM)"]);
+    const litrosTemp = Number(ultimos20[i - 1]["Quantidade"]);
+    consumoData.push((km1 - km2) / litrosTemp);
   }
 
   const ctx = document.getElementById("consumoChart");
 
-  if (window.consumoChartInstance) {
-    window.consumoChartInstance.destroy();
-  }
-
-  window.consumoChartInstance = new Chart(ctx, {
+  new Chart(ctx, {
     type: "line",
     data: {
-      labels: labels,
+      labels: labels.slice(1),
       datasets: [{
         label: "Consumo (km/L)",
-        data: valores,
+        data: consumoData,
         borderColor: "#38bdf8",
         backgroundColor: "rgba(56,189,248,0.1)",
         tension: 0.3,
@@ -134,7 +108,6 @@ function renderChart(dados) {
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false,
       plugins: {
         legend: {
           labels: { color: "#fff" }
@@ -142,52 +115,45 @@ function renderChart(dados) {
       },
       scales: {
         x: {
-          ticks: { color: "#94a3b8" },
-          grid: { color: "rgba(255,255,255,0.05)" }
+          ticks: { color: "#cbd5e1" }
         },
         y: {
-          ticks: { color: "#94a3b8" },
-          grid: { color: "rgba(255,255,255,0.05)" }
+          ticks: { color: "#cbd5e1" }
         }
       }
     }
   });
 
-}
-
-
-
-function renderHistorico(data) {
-
+  // ===== HISTÓRICO =====
   const container = document.getElementById("baseHistContainer");
+  container.innerHTML = "";
 
-  container.innerHTML = `
-    <div class="hist-header">
-      <div>Data</div>
-      <div>Item</div>
-      <div>Local</div>
-      <div>KM</div>
-      <div>Qtd</div>
-      <div>Total</div>
-    </div>
+  const header = document.createElement("div");
+  header.classList.add("hist-header");
+  header.innerHTML = `
+    <div>Data</div>
+    <div>Item</div>
+    <div>Local</div>
+    <div>KM</div>
+    <div>Qtd</div>
+    <div>Total</div>
   `;
+  container.appendChild(header);
 
   data.forEach(row => {
-
     const div = document.createElement("div");
     div.classList.add("hist-row");
 
     div.innerHTML = `
       <div>${row["Data"]}</div>
-      <div>${row["Item"] || "-"}</div>
-      <div>${row["Local"] || "-"}</div>
+      <div>${row["Item"]}</div>
+      <div>${row["Local"]}</div>
       <div>${Number(row["Odômetro (KM)"]).toLocaleString()}</div>
       <div>${row["Quantidade"]}</div>
       <div>R$ ${Number(row["Valor Total"]).toFixed(2)}</div>
     `;
 
     container.appendChild(div);
-
   });
 
 }
