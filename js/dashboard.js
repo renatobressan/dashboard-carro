@@ -30,13 +30,13 @@ async function loadDashboard(userId) {
     return;
   }
 
-  // Converter data texto para Date real
+  // Converter Data para objeto Date
   data.forEach(row => {
     const [dia, mes, ano] = row["Data"].split("/");
     row._dataReal = new Date(`${ano}-${mes}-${dia}`);
   });
 
-  // Ordenar por data decrescente
+  // Ordenar
   data.sort((a, b) => b._dataReal - a._dataReal);
 
   const ultimo = data[0];
@@ -50,37 +50,27 @@ async function loadDashboard(userId) {
   const distancia = kmAtual - kmAnterior;
   const consumo = distancia / litros;
 
-  // ===== MÉDIA ÚLTIMAS 20 =====
-  const ultimos20 = data.slice(0, 20);
-  let somaConsumo = 0;
-  let contador = 0;
-
-  for (let i = 0; i < ultimos20.length - 1; i++) {
-    const km1 = Number(ultimos20[i]["Odômetro (KM)"]);
-    const km2 = Number(ultimos20[i + 1]["Odômetro (KM)"]);
-    const litrosTemp = Number(ultimos20[i]["Quantidade"]);
-
-    const distTemp = km1 - km2;
-    const consTemp = distTemp / litrosTemp;
-
-    if (!isNaN(consTemp) && isFinite(consTemp)) {
-      somaConsumo += consTemp;
-      contador++;
-    }
-  }
-
-  const media = contador > 0 ? somaConsumo / contador : 0;
-
   // ===== ATUALIZAR CARDS =====
-  document.getElementById("cardData").innerText = ultimo["Data"];
-  document.getElementById("cardLocal").innerText = ultimo["Local"];
-  document.getElementById("cardValor").innerText = `R$ ${valor.toFixed(2)}`;
-  document.getElementById("cardKm").innerText = kmAtual.toLocaleString();
-  document.getElementById("cardConsumo").innerText = consumo.toFixed(2) + " km/L";
-  document.getElementById("cardMedia").innerText =
-    "média: " + media.toFixed(2) + " km/L";
+
+  document.getElementById("cardValor").innerText =
+    `R$ ${valor.toFixed(2)}`;
+
+  document.getElementById("cardLitros").innerText =
+    `Litros abastecidos: ${litros}`;
+
+  document.getElementById("cardKm").innerText =
+    kmAtual.toLocaleString();
+
+  document.getElementById("cardDistancia").innerText =
+    `Distância desde o anterior: ${distancia.toLocaleString()} KM`;
+
+  document.getElementById("cardConsumo").innerText =
+    consumo.toFixed(2);
 
   // ===== GRÁFICO =====
+
+  const ultimos20 = data.slice(0, 20);
+
   const labels = ultimos20.map(r => r["Data"]).reverse();
   const consumoData = [];
 
@@ -114,17 +104,14 @@ async function loadDashboard(userId) {
         }
       },
       scales: {
-        x: {
-          ticks: { color: "#cbd5e1" }
-        },
-        y: {
-          ticks: { color: "#cbd5e1" }
-        }
+        x: { ticks: { color: "#cbd5e1" } },
+        y: { ticks: { color: "#cbd5e1" } }
       }
     }
   });
 
   // ===== HISTÓRICO =====
+
   const container = document.getElementById("baseHistContainer");
   container.innerHTML = "";
 
