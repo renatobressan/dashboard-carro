@@ -1,11 +1,14 @@
 document.addEventListener("DOMContentLoaded", async () => {
 
-  const { data: { user } } = await window.sb.auth.getUser();
+  const { data: { user }, error } = await window.sb.auth.getUser();
 
-  if (!user) {
+  if (error || !user) {
+    console.error("Usuário não autenticado");
     window.location.href = "index.html";
     return;
   }
+
+  console.log("User logado:", user.id);
 
   loadDashboard(user.id);
 
@@ -30,54 +33,72 @@ async function loadDashboard(userId) {
   }
 
   // ============================
-  // FUNÇÃO BLINDADA DE NÚMERO
+  // FUNÇÕES BLINDADAS
   // ============================
-  function parseNumber(value) {
+
+  function safeNumber(value) {
     if (value === null || value === undefined) return 0;
 
-    return Number(
-      value
-        .toString()
-        .replace(/\./g, "")      // remove milhar
-        .replace(",", ".")       // ajusta decimal
-        .replace(/[^\d.-]/g, "") // remove lixo
-    ) || 0;
+    if (typeof value === "number") return value;
+
+    if (typeof value === "string") {
+      const cleaned = value
+        .replace(/\./g, "")
+        .replace(",", ".")
+        .replace(/[^\d.-]/g, "");
+      return Number(cleaned) || 0;
+    }
+
+    return 0;
+  }
+
+  function safeText(value) {
+    if (!value) return "";
+    return String(value).trim();
+  }
+
+  function safeDateBR(text) {
+    if (!text) return null;
+    const parts = text.split("/");
+    if (parts.length !== 3) return null;
+    return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
   }
 
   // ============================
-  // CONVERTER DATA
+  // NORMALIZAÇÃO
   // ============================
+
   data.forEach(row => {
-
-    if (!row["Data"]) return;
-
-    const partes = row["Data"].split("/");
-    if (partes.length !== 3) return;
-
-    const [dia, mes, ano] = partes;
-    row._dataReal = new Date(`${ano}-${mes}-${dia}`);
-
+    row._dataReal = safeDateBR(row["Data"]);
   });
-
-  data = data.filter(r => r._dataReal instanceof Date && !isNaN(r._dataReal));
 
   data.sort((a, b) => b._dataReal - a._dataReal);
 
   const ultimo = data[0];
   const anterior = data[1];
 
-  const kmAtual = parseNumber(ultimo["Odômetro (KM)"]);
-  const kmAnterior = parseNumber(anterior["Odômetro (KM)"]);
-  const litros = parseNumber(ultimo["Quantidade"]);
-  const valorTotal = parseNumber(ultimo["Valor Total"]);
+  const kmAtual = safeNumber(ultimo["Odômetro (KM)"]);
+  const kmAnterior = safeNumber(anterior["Odômetro (KM)"]);
+  const litros = safeNumber(ultimo["Quantidade"]);
+  const valorTotal = safeNumber(ultimo["Valor Total"]);
+  const valorUnit = safeNumber(ultimo["Valor Unitário"]);
 
-  const valorLitro = litros > 0 ? valorTotal / litros : 0;
-  const distancia = kmAtual > kmAnterior ? kmAtual - kmAnterior : 0;
-  const consumo = litros > 0 && distancia > 0 ? distancia / litros : 0;
+  const distancia = kmAtual - kmAnterior;
+
+  const consumo =
+    litros > 0 && distancia > 0
+      ? distancia / litros
+      : 0;
+
+  const valorLitro =
+    litros > 0 && valorTotal > 0
+      ? valorTotal / litros
+      : valorUnit;
 
   // ============================
-  // MÉDIA 20
+  // MÉDIA ÚLTIMOS 20
   // ============================
+
   const ultimos20 = data.slice(0, 20);
 
   let soma = 0;
@@ -85,16 +106,19 @@ async function loadDashboard(userId) {
 
   for (let i = 0; i < ultimos20.length - 1; i++) {
 
-    const km1 = parseNumber(ultimos20[i]["Odômetro (KM)"]);
-    const km2 = parseNumber(ultimos20[i + 1]["Odômetro (KM)"]);
-    const litrosTemp = parseNumber(ultimos20[i]["Quantidade"]);
+    const km1 = safeNumber(ultimos20[i]["Odômetro (KM)"]);
+    const km2 = safeNumber(ultimos20[i + 1]["Odômetro (KM)"]);
+    const litrosTemp = safeNumber(ultimos20[i]["Quantidade"]);
 
-    const distTemp = km1 > km2 ? km1 - km2 : 0;
-    const consTemp = litrosTemp > 0 && distTemp > 0 ? distTemp / litrosTemp : 0;
+    const distTemp = km1 - km2;
 
-    if (consTemp > 0 && isFinite(consTemp)) {
-      soma += consTemp;
-      contador++;
+    if (litrosTemp > 0 && distTemp > 0) {
+      const consTemp = distTemp / litrosTemp;
+
+      if (!isNaN(consTemp) && isFinite(consTemp)) {
+        soma += consTemp;
+        contador++;
+      }
     }
   }
 
@@ -104,7 +128,8 @@ async function loadDashboard(userId) {
   // ATUALIZAR CARDS
   // ============================
 
-  document.getElementById("cardData").innerText = ultimo["Data"] || "--";
+  document.getElementById("cardData").innerText =
+    safeText(ultimo["Data"]);
 
   document.getElementById("cardValor").innerText =
     `R$ ${valorTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
@@ -124,15 +149,17 @@ async function loadDashboard(userId) {
 
   for (let i = ultimos20.length - 1; i > 0; i--) {
 
-    const km1 = parseNumber(ultimos20[i]["Odômetro (KM)"]);
-    const km2 = parseNumber(ultimos20[i - 1]["Odômetro (KM)"]);
-    const litrosTemp = parseNumber(ultimos20[i - 1]["Quantidade"]);
+    const km1 = safeNumber(ultimos20[i]["Odômetro (KM)"]);
+    const km2 = safeNumber(ultimos20[i - 1]["Odômetro (KM)"]);
+    const litrosTemp = safeNumber(ultimos20[i - 1]["Quantidade"]);
 
-    const distTemp = km2 > km1 ? km2 - km1 : 0;
-    const consTemp = litrosTemp > 0 && distTemp > 0 ? distTemp / litrosTemp : 0;
+    const distTemp = km2 - km1;
 
-    labels.push(ultimos20[i - 1]["Data"]);
-    consumoArray.push(consTemp);
+    if (litrosTemp > 0 && distTemp > 0) {
+      const consTemp = distTemp / litrosTemp;
+      labels.push(safeText(ultimos20[i - 1]["Data"]));
+      consumoArray.push(consTemp);
+    }
   }
 
   const mediaArray = new Array(consumoArray.length).fill(media);
@@ -181,8 +208,7 @@ async function loadDashboard(userId) {
         },
         y: {
           ticks: { color: "#94a3b8" },
-          grid: { color: "rgba(255,255,255,0.05)" },
-          beginAtZero: false
+          grid: { color: "rgba(255,255,255,0.05)" }
         }
       }
     }
