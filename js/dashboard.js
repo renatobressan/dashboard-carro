@@ -29,27 +29,55 @@ async function loadDashboard(userId) {
     return;
   }
 
-  // ===== CONVERTER DATA =====
+  // ============================
+  // FUNÇÃO BLINDADA DE NÚMERO
+  // ============================
+  function parseNumber(value) {
+    if (value === null || value === undefined) return 0;
+
+    return Number(
+      value
+        .toString()
+        .replace(/\./g, "")      // remove milhar
+        .replace(",", ".")       // ajusta decimal
+        .replace(/[^\d.-]/g, "") // remove lixo
+    ) || 0;
+  }
+
+  // ============================
+  // CONVERTER DATA
+  // ============================
   data.forEach(row => {
-    const [dia, mes, ano] = row["Data"].split("/");
+
+    if (!row["Data"]) return;
+
+    const partes = row["Data"].split("/");
+    if (partes.length !== 3) return;
+
+    const [dia, mes, ano] = partes;
     row._dataReal = new Date(`${ano}-${mes}-${dia}`);
+
   });
+
+  data = data.filter(r => r._dataReal instanceof Date && !isNaN(r._dataReal));
 
   data.sort((a, b) => b._dataReal - a._dataReal);
 
   const ultimo = data[0];
   const anterior = data[1];
 
-  const kmAtual = Number(ultimo["Odômetro (KM)"]);
-  const kmAnterior = Number(anterior["Odômetro (KM)"]);
-  const litros = Number(ultimo["Quantidade"]);
-  const valorTotal = Number(ultimo["Valor Total"]);
+  const kmAtual = parseNumber(ultimo["Odômetro (KM)"]);
+  const kmAnterior = parseNumber(anterior["Odômetro (KM)"]);
+  const litros = parseNumber(ultimo["Quantidade"]);
+  const valorTotal = parseNumber(ultimo["Valor Total"]);
 
   const valorLitro = litros > 0 ? valorTotal / litros : 0;
-  const distancia = kmAtual - kmAnterior;
-  const consumo = litros > 0 ? distancia / litros : 0;
+  const distancia = kmAtual > kmAnterior ? kmAtual - kmAnterior : 0;
+  const consumo = litros > 0 && distancia > 0 ? distancia / litros : 0;
 
-  // ===== MÉDIA 20 =====
+  // ============================
+  // MÉDIA 20
+  // ============================
   const ultimos20 = data.slice(0, 20);
 
   let soma = 0;
@@ -57,14 +85,14 @@ async function loadDashboard(userId) {
 
   for (let i = 0; i < ultimos20.length - 1; i++) {
 
-    const km1 = Number(ultimos20[i]["Odômetro (KM)"]);
-    const km2 = Number(ultimos20[i + 1]["Odômetro (KM)"]);
-    const litrosTemp = Number(ultimos20[i]["Quantidade"]);
+    const km1 = parseNumber(ultimos20[i]["Odômetro (KM)"]);
+    const km2 = parseNumber(ultimos20[i + 1]["Odômetro (KM)"]);
+    const litrosTemp = parseNumber(ultimos20[i]["Quantidade"]);
 
-    const distTemp = km1 - km2;
-    const consTemp = litrosTemp > 0 ? distTemp / litrosTemp : 0;
+    const distTemp = km1 > km2 ? km1 - km2 : 0;
+    const consTemp = litrosTemp > 0 && distTemp > 0 ? distTemp / litrosTemp : 0;
 
-    if (!isNaN(consTemp) && isFinite(consTemp)) {
+    if (consTemp > 0 && isFinite(consTemp)) {
       soma += consTemp;
       contador++;
     }
@@ -72,11 +100,11 @@ async function loadDashboard(userId) {
 
   const media = contador > 0 ? soma / contador : 0;
 
-  // =========================
+  // ============================
   // ATUALIZAR CARDS
-  // =========================
+  // ============================
 
-  document.getElementById("cardData").innerText = ultimo["Data"];
+  document.getElementById("cardData").innerText = ultimo["Data"] || "--";
 
   document.getElementById("cardValor").innerText =
     `R$ ${valorTotal.toLocaleString("pt-BR", { minimumFractionDigits: 2 })}`;
@@ -85,23 +113,23 @@ async function loadDashboard(userId) {
     kmAtual.toLocaleString("pt-BR");
 
   document.getElementById("cardConsumo").innerText =
-    consumo.toFixed(2);
+    consumo > 0 ? consumo.toFixed(2) : "--";
 
-  // =========================
+  // ============================
   // GRÁFICO
-  // =========================
+  // ============================
 
   const labels = [];
   const consumoArray = [];
 
   for (let i = ultimos20.length - 1; i > 0; i--) {
 
-    const km1 = Number(ultimos20[i]["Odômetro (KM)"]);
-    const km2 = Number(ultimos20[i - 1]["Odômetro (KM)"]);
-    const litrosTemp = Number(ultimos20[i - 1]["Quantidade"]);
+    const km1 = parseNumber(ultimos20[i]["Odômetro (KM)"]);
+    const km2 = parseNumber(ultimos20[i - 1]["Odômetro (KM)"]);
+    const litrosTemp = parseNumber(ultimos20[i - 1]["Quantidade"]);
 
-    const distTemp = km2 - km1;
-    const consTemp = litrosTemp > 0 ? distTemp / litrosTemp : 0;
+    const distTemp = km2 > km1 ? km2 - km1 : 0;
+    const consTemp = litrosTemp > 0 && distTemp > 0 ? distTemp / litrosTemp : 0;
 
     labels.push(ultimos20[i - 1]["Data"]);
     consumoArray.push(consTemp);
@@ -140,6 +168,7 @@ async function loadDashboard(userId) {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
         legend: {
           labels: { color: "#cbd5e1" }
@@ -152,7 +181,8 @@ async function loadDashboard(userId) {
         },
         y: {
           ticks: { color: "#94a3b8" },
-          grid: { color: "rgba(255,255,255,0.05)" }
+          grid: { color: "rgba(255,255,255,0.05)" },
+          beginAtZero: false
         }
       }
     }
