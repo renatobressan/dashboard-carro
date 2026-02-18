@@ -16,135 +16,83 @@ async function loadDashboard(userId) {
   const { data, error } = await window.sb
     .from("Base_Hist")
     .select("*")
-    .eq("Tipo", "Abastecimento")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .order("id", { ascending: false });
 
   if (error) {
     console.error(error);
     return;
   }
 
-  if (!data || data.length < 2) {
-    console.warn("Dados insuficientes.");
+  if (!data || data.length === 0) {
+    console.warn("Sem dados.");
     return;
   }
 
-  // ===============================
-  // FUNÇÕES AUXILIARES
-  // ===============================
+  // =============================
+  // HISTÓRICO COMPLETO
+  // =============================
 
-  function parseKm(valor) {
-    if (!valor) return 0;
-    return Number(valor.toString().replace(/\./g, "").replace(",", "."));
-  }
+  const container = document.getElementById("baseHistContainer");
+  container.innerHTML = "";
 
-  function parseNumber(valor) {
-    if (!valor) return 0;
-    return Number(valor.toString().replace(",", "."));
-  }
+  // HEADER
+  const header = document.createElement("div");
+  header.classList.add("hist-header");
+  header.innerHTML = `
+    <div>Data</div>
+    <div>Placa</div>
+    <div>Tipo</div>
+    <div>Item</div>
+    <div>Local</div>
+    <div>Odômetro</div>
+    <div>Valor Unit.</div>
+    <div>Qtd</div>
+    <div>Total</div>
+    <div>Anotações</div>
+  `;
+  container.appendChild(header);
 
-  // ===============================
-  // ORDENAR POR KM DESC
-  // ===============================
+  // LINHAS
+  data.forEach(row => {
 
-  data.sort((a, b) =>
-    parseKm(b["Odômetro (KM)"]) - parseKm(a["Odômetro (KM)"])
-  );
+    const div = document.createElement("div");
+    div.classList.add("hist-row");
 
-  // ===============================
-  // GRÁFICO (ÚLTIMOS 20)
-  // ===============================
+    div.innerHTML = `
+      <div>${row["Data"] || "-"}</div>
+      <div>${row["Placa"] || "-"}</div>
+      <div>${row["Tipo"] || "-"}</div>
+      <div>${row["Item"] || "-"}</div>
+      <div>${row["Local"] || "-"}</div>
+      <div>${formatKm(row["Odômetro (KM)"])}</div>
+      <div>${formatMoney(row["Valor Unitário"])}</div>
+      <div>${formatNumber(row["Quantidade"])}</div>
+      <div>${formatMoney(row["Valor Total"])}</div>
+      <div>${row["Anotações"] || "-"}</div>
+    `;
 
-  const ultimos20 = data.slice(0, 20);
+    container.appendChild(div);
 
-  const labels = [];
-  const consumoData = [];
-
-  for (let i = 0; i < ultimos20.length - 1; i++) {
-
-    const km1 = parseKm(ultimos20[i]["Odômetro (KM)"]);
-    const km2 = parseKm(ultimos20[i + 1]["Odômetro (KM)"]);
-    const litrosTemp = parseNumber(ultimos20[i]["Quantidade"]);
-
-    const distTemp = km1 - km2;
-    const consTemp = distTemp / litrosTemp;
-
-    if (!isNaN(consTemp) && isFinite(consTemp)) {
-      labels.push(ultimos20[i]["Data"]);
-      consumoData.push(consTemp);
-    }
-  }
-
-  // ===============================
-  // CALCULAR MÉDIA
-  // ===============================
-
-  const soma = consumoData.reduce((acc, val) => acc + val, 0);
-  const media = consumoData.length > 0 ? soma / consumoData.length : 0;
-
-  // Criar array da média para desenhar linha horizontal
-  const mediaArray = new Array(consumoData.length).fill(media);
-
-  // ===============================
-  // RENDERIZAR GRÁFICO
-  // ===============================
-
-  const ctx = document.getElementById("consumoChart");
-
-  new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: labels.reverse(),
-      datasets: [
-        {
-          label: "Consumo (km/L)",
-          data: consumoData.reverse(),
-          borderColor: "#38bdf8",
-          backgroundColor: "rgba(56,189,248,0.15)",
-          tension: 0.3,
-          fill: true,
-          pointRadius: 4
-        },
-        {
-          label: "Média (últimos 20)",
-          data: mediaArray.reverse(),
-          borderColor: "#ef4444",
-          borderDash: [8, 6], // 🔴 Linha tracejada
-          tension: 0,
-          fill: false,
-          pointRadius: 0
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          labels: {
-            color: "#ffffff"
-          }
-        }
-      },
-      scales: {
-        x: {
-          ticks: {
-            color: "#cbd5e1"
-          },
-          grid: {
-            color: "rgba(255,255,255,0.05)"
-          }
-        },
-        y: {
-          ticks: {
-            color: "#cbd5e1"
-          },
-          grid: {
-            color: "rgba(255,255,255,0.05)"
-          }
-        }
-      }
-    }
   });
 
+}
+
+// =============================
+// FORMATADORES
+// =============================
+
+function formatKm(valor) {
+  if (!valor) return "-";
+  return Number(valor).toLocaleString("pt-BR");
+}
+
+function formatMoney(valor) {
+  if (!valor) return "-";
+  return "R$ " + Number(valor).toFixed(2);
+}
+
+function formatNumber(valor) {
+  if (!valor) return "-";
+  return Number(valor).toLocaleString("pt-BR");
 }
