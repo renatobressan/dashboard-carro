@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard – Car Dashboard</title>
-
   <link rel="stylesheet" href="./css/dashboard.css">
 </head>
 
@@ -16,37 +15,31 @@
     Dashboard – Abastecimento & Manutenção
   </h1>
 
-  <!-- ===== CARDS SUPERIORES ===== -->
+  <!-- ===== CARDS ===== -->
   <div class="cards-container">
 
-    <!-- CARD 1 - DATA -->
     <div class="card">
-      <div class="card-label">Última Data de Abastecimento</div>
+      <div class="card-label">Última Data</div>
       <div class="card-value" id="cardData">--</div>
       <div class="card-footer" id="cardLocal">--</div>
     </div>
 
-    <!-- CARD 2 - VALOR -->
     <div class="card">
       <div class="card-label">Valor Pago</div>
       <div class="card-value" id="cardValor">R$ --</div>
-      <div class="card-footer" id="cardLitros">--</div>
+      <div class="card-footer" id="cardValorFooter">--</div>
     </div>
 
-    <!-- CARD 3 - KM -->
     <div class="card">
       <div class="card-label">Odômetro (KM)</div>
       <div class="card-value" id="cardKm">--</div>
-      <div class="card-footer" id="cardDistancia">--</div>
+      <div class="card-footer" id="cardKmFooter">--</div>
     </div>
 
-    <!-- CARD 4 - CONSUMO -->
     <div class="card">
-      <div class="card-label">Consumo</div>
+      <div class="card-label">Consumo (km/L)</div>
       <div class="card-value" id="cardConsumo">--</div>
-      <div class="card-footer">
-        Calculo: (KM Atual - KM Anterior) + Litros Atuais
-      </div>
+      <div class="card-footer">Cálculo: (KM Atual - KM Anterior) ÷ Litros</div>
     </div>
 
   </div>
@@ -56,7 +49,6 @@
     <div class="section-title">
       Consumo (KM/L) – últimas 20 datas
     </div>
-
     <div class="chart-body">
       <canvas id="consumoChart"></canvas>
     </div>
@@ -67,10 +59,7 @@
     <div class="section-title">
       Histórico de Abastecimento
     </div>
-
-    <div id="baseHistContainer" class="base-hist-container">
-      <!-- preenchido via JS -->
-    </div>
+    <div id="baseHistContainer" class="base-hist-container"></div>
   </div>
 
 </div>
