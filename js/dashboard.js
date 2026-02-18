@@ -20,24 +20,19 @@ async function loadDashboard(userId) {
     .eq("user_id", userId);
 
   if (error) {
-    console.error("Erro ao buscar Base_Hist:", error);
-    alert("Erro ao carregar dados.");
+    console.error(error);
     return;
   }
 
-  if (!data || data.length < 2) {
-    console.warn("Dados insuficientes para cálculo.");
-    return;
-  }
+  if (!data || data.length < 2) return;
 
-  // Converter data texto para Date real
+  // Converter data
   data.forEach(row => {
     const [dia, mes, ano] = row["Data"].split("/");
     row._dataReal = new Date(`${ano}-${mes}-${dia}`);
   });
 
-  // Ordenar mais recente primeiro
-  data.sort((a, b) => b._dataReal - a._dataReal);
+  data.sort((a,b)=> b._dataReal - a._dataReal);
 
   const ultimo = data[0];
   const anterior = data[1];
@@ -45,59 +40,53 @@ async function loadDashboard(userId) {
   const kmAtual = Number(ultimo["Odômetro (KM)"]);
   const kmAnterior = Number(anterior["Odômetro (KM)"]);
   const litros = Number(ultimo["Quantidade"]);
-  const valor = Number(ultimo["Valor Total"]);
-  const local = ultimo["Local"];
+  const valorTotal = Number(ultimo["Valor Total"]);
+  const valorLitro = valorTotal / litros;
 
   const distancia = kmAtual - kmAnterior;
   const consumo = distancia / litros;
 
-  // ===== ATUALIZAR CARDS =====
+  // ===== CARDS =====
 
-  // DATA
-  document.getElementById("cardData").innerText =
-    ultimo["Data"];
+  document.getElementById("cardData").innerText = ultimo["Data"];
+  document.getElementById("cardLocal").innerText = ultimo["Local"];
 
-  document.getElementById("cardLocal").innerText =
-    local;
-
-  // VALOR
   document.getElementById("cardValor").innerText =
-    `R$ ${valor.toFixed(2)}`;
+    `R$ ${valorTotal.toFixed(2)}`;
 
-  document.getElementById("cardLitros").innerText =
-    `Litros abastecidos: ${litros}`;
+  document.getElementById("cardValorFooter").innerText =
+    `${litros.toFixed(2)} L • R$ ${valorLitro.toFixed(2)}/L`;
 
-  // KM
   document.getElementById("cardKm").innerText =
     kmAtual.toLocaleString();
 
-  document.getElementById("cardDistancia").innerText =
-    `Distância desde o anterior: ${distancia.toLocaleString()} KM`;
+  document.getElementById("cardKmFooter").innerText =
+    `+${distancia.toLocaleString()} KM desde o último`;
 
-  // CONSUMO (somente número)
   document.getElementById("cardConsumo").innerText =
     consumo.toFixed(2);
 
   // ===== GRÁFICO =====
 
-  const ultimos20 = data.slice(0, 20);
+  const ultimos20 = data.slice(0,20);
 
-  const labels = ultimos20.map(r => r["Data"]).reverse();
+  const labels = [];
   const consumoData = [];
 
   for (let i = ultimos20.length - 1; i > 0; i--) {
+
     const km1 = Number(ultimos20[i - 1]["Odômetro (KM)"]);
     const km2 = Number(ultimos20[i]["Odômetro (KM)"]);
     const litrosTemp = Number(ultimos20[i - 1]["Quantidade"]);
+
+    labels.push(ultimos20[i - 1]["Data"]);
     consumoData.push((km1 - km2) / litrosTemp);
   }
 
-  const ctx = document.getElementById("consumoChart");
-
-  new Chart(ctx, {
+  new Chart(document.getElementById("consumoChart"), {
     type: "line",
     data: {
-      labels: labels.slice(1),
+      labels: labels,
       datasets: [{
         label: "Consumo (km/L)",
         data: consumoData,
@@ -108,12 +97,7 @@ async function loadDashboard(userId) {
       }]
     },
     options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          labels: { color: "#fff" }
-        }
-      },
+      plugins: { legend: { labels: { color: "#fff" } } },
       scales: {
         x: { ticks: { color: "#cbd5e1" } },
         y: { ticks: { color: "#cbd5e1" } }
