@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard – Car Dashboard</title>
+
   <link rel="stylesheet" href="./css/dashboard.css">
 </head>
 
@@ -18,32 +19,28 @@
   <!-- ===== CARDS ===== -->
   <div class="cards-container">
 
-    <!-- DATA -->
     <div class="card">
       <div class="card-label">Última Data</div>
       <div class="card-value" id="cardData">--</div>
-      <div class="card-footer" id="cardLocal">--</div>
+      <div class="card-footer" id="cardDataFooter">--</div>
     </div>
 
-    <!-- VALOR -->
     <div class="card">
       <div class="card-label">Valor Pago</div>
       <div class="card-value" id="cardValor">R$ --</div>
       <div class="card-footer" id="cardValorFooter">--</div>
     </div>
 
-    <!-- KM -->
     <div class="card">
       <div class="card-label">Odômetro (KM)</div>
       <div class="card-value" id="cardKm">--</div>
       <div class="card-footer" id="cardKmFooter">--</div>
     </div>
 
-    <!-- CONSUMO -->
     <div class="card">
       <div class="card-label">Consumo (km/L)</div>
       <div class="card-value" id="cardConsumo">--</div>
-      <div class="card-footer" id="cardConsumoFooter">Cálculo: (KM Atual - KM Anterior) ÷ Litros</div>
+      <div class="card-footer">Cálculo: (KM Atual - KM Anterior) ÷ Litros</div>
     </div>
 
   </div>
@@ -58,12 +55,31 @@
     </div>
   </div>
 
-  <!-- ===== HISTÓRICO ===== -->
-  <div class="section-card" style="margin-top: 30px;">
+  <!-- ===== HISTÓRICO COMPLETO ===== -->
+  <div class="section-card">
     <div class="section-title">
       Histórico de Abastecimento
     </div>
-    <div id="baseHistContainer" class="base-hist-container"></div>
+
+    <div class="base-hist-container">
+
+      <div class="hist-header">
+        <div>Data</div>
+        <div>Placa</div>
+        <div>Tipo</div>
+        <div>Item</div>
+        <div>Local</div>
+        <div>Odômetro</div>
+        <div>Valor Unit.</div>
+        <div>Qtd</div>
+        <div>Total</div>
+        <div>Anotações</div>
+      </div>
+
+      <div id="baseHistContainer"></div>
+
+    </div>
+
   </div>
 
 </div>
