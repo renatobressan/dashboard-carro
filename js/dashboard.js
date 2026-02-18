@@ -30,13 +30,13 @@ async function loadDashboard(userId) {
     return;
   }
 
-  // Converter Data para objeto Date
+  // Converter data texto para Date real
   data.forEach(row => {
     const [dia, mes, ano] = row["Data"].split("/");
     row._dataReal = new Date(`${ano}-${mes}-${dia}`);
   });
 
-  // Ordenar
+  // Ordenar mais recente primeiro
   data.sort((a, b) => b._dataReal - a._dataReal);
 
   const ultimo = data[0];
@@ -46,24 +46,35 @@ async function loadDashboard(userId) {
   const kmAnterior = Number(anterior["Odômetro (KM)"]);
   const litros = Number(ultimo["Quantidade"]);
   const valor = Number(ultimo["Valor Total"]);
+  const local = ultimo["Local"];
 
   const distancia = kmAtual - kmAnterior;
   const consumo = distancia / litros;
 
   // ===== ATUALIZAR CARDS =====
 
+  // DATA
+  document.getElementById("cardData").innerText =
+    ultimo["Data"];
+
+  document.getElementById("cardLocal").innerText =
+    local;
+
+  // VALOR
   document.getElementById("cardValor").innerText =
     `R$ ${valor.toFixed(2)}`;
 
   document.getElementById("cardLitros").innerText =
     `Litros abastecidos: ${litros}`;
 
+  // KM
   document.getElementById("cardKm").innerText =
     kmAtual.toLocaleString();
 
   document.getElementById("cardDistancia").innerText =
     `Distância desde o anterior: ${distancia.toLocaleString()} KM`;
 
+  // CONSUMO (somente número)
   document.getElementById("cardConsumo").innerText =
     consumo.toFixed(2);
 
