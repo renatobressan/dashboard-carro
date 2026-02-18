@@ -27,7 +27,7 @@ body {
   margin-bottom: 40px;
 }
 
-/* ===== CARDS ===== */
+/* ===== CARDS GRID ===== */
 .cards-container {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -35,6 +35,7 @@ body {
   margin-bottom: 40px;
 }
 
+/* ===== CARD ===== */
 .card {
   background: #1e293b;
   padding: 26px;
@@ -69,56 +70,54 @@ body {
   margin-top: 12px;
 }
 
-/* ===== SECTION CARD ===== */
+/* ===== SECTIONS FULL WIDTH ===== */
 .section-card {
   background: #1e293b;
-  padding: 28px;
+  padding: 30px;
   border-radius: 20px;
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
   margin-bottom: 40px;
 }
 
 .section-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   color: #cbd5e1;
 }
 
 /* ===== GRÁFICO ===== */
 .chart-body {
-  height: 340px;
-  position: relative;
+  height: 320px;
 }
 
 /* ===== HISTÓRICO ===== */
 .base-hist-container {
-  max-height: 420px;
+  max-height: 450px;
   overflow-y: auto;
 }
 
-.hist-header,
-.hist-row {
-  display: grid;
-  grid-template-columns: 100px 120px 1fr 120px 80px 120px;
-  align-items: center;
-  padding: 14px 10px;
-  font-size: 14px;
-}
-
+/* HEADER HISTÓRICO */
 .hist-header {
-  position: sticky;
-  top: 0;
-  background: #1e293b;
+  display: grid;
+  grid-template-columns: 120px 120px 1fr 120px 100px 120px;
+  padding: 16px 10px;
   font-weight: 600;
   color: #38bdf8;
   border-bottom: 1px solid rgba(255,255,255,0.1);
-  z-index: 2;
+  text-align: center;
 }
 
+/* LINHAS HISTÓRICO */
 .hist-row {
-  border-bottom: 1px solid rgba(255,255,255,0.05);
+  display: grid;
+  grid-template-columns: 120px 120px 1fr 120px 100px 120px;
+  padding: 18px 10px;
+  font-size: 14px;
   color: #cbd5e1;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  text-align: center;
+  align-items: center;
   transition: background 0.2s ease;
 }
 
@@ -126,7 +125,7 @@ body {
   background: rgba(255,255,255,0.04);
 }
 
-/* Números alinhados */
+/* NUMÉRICOS À DIREITA */
 .hist-row div:nth-child(4),
 .hist-row div:nth-child(5),
 .hist-row div:nth-child(6) {
@@ -134,13 +133,13 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Scroll elegante */
+/* SCROLL BONITO */
 .base-hist-container::-webkit-scrollbar {
   width: 6px;
 }
 
 .base-hist-container::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.15);
+  background: rgba(255,255,255,0.1);
   border-radius: 10px;
 }
 
@@ -156,5 +155,11 @@ body {
 
   .card-value {
     font-size: 28px;
+  }
+
+  .hist-header,
+  .hist-row {
+    grid-template-columns: 100px 100px 1fr;
+    font-size: 12px;
   }
 }
