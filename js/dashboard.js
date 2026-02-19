@@ -193,8 +193,11 @@ async function loadDashboard(userId) {
   document.getElementById("cardConsumo").innerText =
     consumo > 0 ? consumo.toFixed(2) : "--";
 
-  document.getElementById("cardConsumoFooter").innerText =
-    "Cálculo: (KM Atual - KM Anterior) ÷ Litros";
+    const consumoFooter = document.getElementById("cardConsumoFooter");
+    if (consumoFooter) {
+      consumoFooter.innerText =
+        "Cálculo: (KM Atual - KM Anterior) ÷ Litros";
+    }
 
   // ============================
   // GRÁFICO
